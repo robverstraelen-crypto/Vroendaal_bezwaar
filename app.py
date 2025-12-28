@@ -10,7 +10,6 @@ try:
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 except:
     # Fallback voor als je lokaal test zonder secrets file, of als de key mist
-    st.warning("⚠️ Geen API Key gevonden in st.secrets. Zorg dat deze is ingesteld op Streamlit Cloud.")
     client = None
 
 # --- JURIDISCHE TEKSTBLOKKEN (DE MUNITIE) ---
@@ -124,7 +123,7 @@ CHECKBOX_LABELS = {
 
 def generate_zienswijze(naam, adres, datum, selected_ids, personal_note):
     if not client:
-        return "⚠️ Er is geen API key ingesteld. Ik kan geen brief genereren."
+        return "⚠️ Er is geen API key ingesteld. Ik kan geen brief genereren. Controleer je 'Secrets' in Streamlit."
 
     # Bouw de juridische argumentatie op
     juridische_argumenten = ""
@@ -163,4 +162,105 @@ def generate_zienswijze(naam, adres, datum, selected_ids, personal_note):
     """
 
     try:
-        response = client.chat.completions.
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.7
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"Er ging iets mis bij de AI connectie: {str(e)}"
+
+def create_pdf(text):
+    pdf = FPDF()
+    pdf.add_page()
+    pdf.set_font("Arial", size=11)
+    # Simpele encoding fix voor PDF (vervangt niet-ondersteunde karakters)
+    clean_text = text.encode('latin-1', 'replace').decode('latin-1')
+    pdf.multi_cell(0, 6, clean_text)
+    return pdf.output(dest="S").encode("latin-1")
+
+# --- DE WEBSITE (UI) ---
+
+st.set_page_config(page_title="Verzet Vroendaal", page_icon="⚖️")
+
+st.title("⚖️ Zienswijze Generator Vroendaal")
+st.markdown("""
+**Instructie:**
+Met deze tool genereert u een juridisch onderbouwde zienswijze tegen het nieuwbouwplan.
+Vul uw gegevens in, vink uw bezwaren aan en klik op 'Genereer'.
+""")
+
+with st.form("zienswijze_form"):
+    col1, col2 = st.columns(2)
+    with col1:
+        naam = st.text_input("Uw Naam")
+        adres = st.text_input("Uw Adres + Huisnummer")
+    with col2:
+        woonplaats = st.text_input("Postcode + Woonplaats", value="Maastricht")
+        datum = st.text_input("Datum", value=datetime.date.today().strftime("%d-%m-%Y"))
+
+    st.subheader("Selecteer uw bezwaren")
+    st.info("Kies de punten die op u van toepassing zijn. De tool voegt de juridische onderbouwing automatisch toe.")
+    
+    selected_ids = []
+    
+    # Maak 2 kolommen voor de checkboxes
+    c1, c2 = st.columns(2)
+    
+    # Eerste 10 in kolom 1
+    with c1:
+        st.markdown("**Leefbaarheid & Woning**")
+        for i in range(1, 11):
+            if st.checkbox(CHECKBOX_LABELS[i], key=i):
+                selected_ids.append(i)
+                
+    # Volgende 10 in kolom 2
+    with c2:
+        st.markdown("**Milieu, Natuur & Procedure**")
+        for i in range(11, 21):
+            if st.checkbox(CHECKBOX_LABELS[i], key=i):
+                selected_ids.append(i)
+
+    st.subheader("Persoonlijke Situatie (Optioneel)")
+    personal_note = st.text_area("Wat is uw specifieke zorg? (Bijv: 'Mijn tuin grenst aan de inrit', 'Mijn kind fietst hier')", height=100)
+
+    submitted = st.form_submit_button("🚀 Genereer Mijn Zienswijze")
+
+# --- LOGICA NA INDIENEN ---
+
+if submitted:
+    if not naam or not adres:
+        st.error("Vul alstublieft uw naam en adres in.")
+    elif len(selected_ids) == 0:
+        st.error("Selecteer minimaal één bezwaarpunt.")
+    else:
+        with st.spinner("De jurist schrijft uw brief... (dit duurt ca. 10 seconden)"):
+            try:
+                # Roep AI aan
+                brief_tekst = generate_zienswijze(naam, f"{adres}, {woonplaats}", datum, selected_ids, personal_note)
+                
+                if "⚠️" in brief_tekst or "Er ging iets mis" in brief_tekst:
+                    st.error(brief_tekst)
+                else:
+                    st.success("Uw zienswijze is gereed!")
+                    
+                    # Toon tekst op scherm
+                    st.text_area("Concept Zienswijze:", value=brief_tekst, height=400)
+                    
+                    # Download knop PDF
+                    pdf_bytes = create_pdf(brief_tekst)
+                    st.download_button(
+                        label="📄 Download als PDF",
+                        data=pdf_bytes,
+                        file_name="Zienswijze_Vroendaal.pdf",
+                        mime="application/pdf"
+                    )
+                    
+                    st.warning("⚠️ DISCLAIMER: Lees de brief goed door voordat u deze verstuurt. U blijft zelf verantwoordelijk voor de inhoud.")
+                
+            except Exception as e:
+                st.error(f"Er ging iets mis: {e}")
