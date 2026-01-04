@@ -14,90 +14,113 @@ except:
 
 # --- JURIDISCHE TEKSTBLOKKEN (DE MUNITIE) ---
 TEXT_BLOCKS = {
+    # JURIDISCHE TEKSTBLOKKEN MAPPING (REVISIE 2 - GEBASEERD OP DRAFT 6)
+# Deze teksten zijn specifiek gemaakt voor de situatie Rijksweg 39 / Vroendaal.
+
+TEXT_BLOCKS = {
     1: """
-    **Strijdigheid met Verkeersstructuur en Leefbaarheid (Ravensbosch/Bruysterbosch)**
-    Het plan is in strijd met de vereiste van 'een goede ruimtelijke ordening' (art. 5.2 Omgevingswet) doordat het een verkeersintensiteit van circa 400 mvt/etmaal genereert die wordt afgewikkeld via smalle woonstraten (erftoegangswegen, 30km-zone). De interne wegenstructuur van Vroendaal is morfologisch en profiel-technisch niet berekend op deze toename, zeker niet in combinatie met zwaar bouwverkeer en logistieke diensten. Dit leidt tot een onaanvaardbare aantasting van het verblijfsklimaat en de verkeersveiligheid in de wijk.
+    **Strijdigheid met Verkeersstructuur (Sluipverkeer via 'De Knip')**
+    Het plan leidt het verkeer van 'Blok A' via de interne wegenstructuur (Bruysterbosch/Bunderbosch/Ravensbosch/Jansbosch/Savelsbosch). Dit is in strijd met het principe van 'Duurzaam Veilig'. Deze straten zijn ingericht als Erftoegangsweg (30km/h) en niet berekend op de toevoeging van extra ontsluitingsverkeer voor 43 appartementen plus bezoekers. De voorgestelde verkeersafwikkeling tast de leefbaarheid onevenredig aan en leidt tot ongewenst sluipverkeer door de wijk.
     """,
+
     2: """
-    **Aantasting Veiligheid Spelende Kinderen (Woonerf-karakter)**
-    De straten in Vroendaal functioneren feitelijk als woonerf waar de auto te gast is en kinderen op straat spelen. De voorgenomen verkeerstoename doorbreekt dit karakter en creëert objectieve onveiligheid voor kwetsbare verkeersdeelnemers. Het plan staat hiermee haaks op de gemeentelijke beleidsambities inzake 'Kindvriendelijk Maastricht' en de verkeersveiligheidsvisie 'Duurzaam Veilig'.
+    **Aantasting Verblijfsfunctie en Veiligheid Kinderen**
+    De meeste straten in Vroendaal functioneren feitelijk als 'woonerf' (verblijfsgebied) waar kinderen op straat spelen. De toename van verkeersintensiteit door het plan doorbreekt dit karakter. De gemeente faciliteert hier een situatie waarin de auto domineert boven de spelende bezoeker, wat haaks staat op de gemeentelijke ambities voor veilige, kindvriendelijke wijken. De objectieve verkeersveiligheid komt in het geding.
     """,
+
     3: """
-    **Onveilige Schoolroute (Savelsbosch)**
-    De ontsluitingsroute doorkruist of interfereert met een primaire fiets- en looproute voor schoolgaande kinderen (o.a. richting basisschool/opvang). Gezien het ontbreken van vrijliggende fietspaden of veilige oversteekvoorzieningen op de kruisingen rondom de Savelsbosch, introduceert het plan onaanvaardbare risico's voor deze kwetsbare groep. Dit getuigt niet van een zorgvuldige belangenafweging.
+    **Risico Schoolroute (Kruising Savelsbosch/Rijksweg)**
+    De verkeersgeneratie van het plan interfereert met de langzaam-verkeersroute richting basisscholen en Porta Mosana (route Savelsbosch). Het plan voorziet niet in adequate veiligheidsmaatregelen voor overstekende fietsers en voetgangers op de kruispunten die zwaarder belast gaan worden. Zonder fysieke aanpassing van de infrastructuur is de veiligheid van schoolgaande kinderen niet gewaarborgd.
     """,
+
     4: """
-    **Verkeersinfarct en Blokkade Hulpdiensten (N278/Rijksweg)**
-    De aansluiting van 'Blok B' op de Rijksweg (N278) via een opsplitsing/inkorting van de opstelstrook is verkeerskundig onverantwoord. De N278 is een cruciale calamiteitenroute voor ambulances en brandweer richting het MUMC+ en het Heuvelland. De kans op terugslag (filevorming) tot op de hoofdrijbaan is reëel, waardoor de aanrijtijden van hulpdiensten in het geding komen. Het algemeen belang van openbare veiligheid wordt hier ten onrechte ondergeschikt gemaakt aan het bouwplan.
+    **Verkeersveiligheid Rijksweg N278 (Inkorten Uitvoegstrook)**
+    De ontsluiting van 'Blok B' op de Rijksweg (N278) is verkeerstechnisch onaanvaardbaar. Het plan voorziet in het opsplitsen/inkorten van de bestaande opstelstrook/uitvoegstrook. Dit creëert een 'weefvak' dat te kort is volgens CROW-richtlijnen. Dit leidt tot reëel gevaar van terugslag van wachtend verkeer op de hoofdrijbaan (50 km/u), wat de doorstroming (van hulpdiensten) op deze cruciale route naar het MUMC+ blokkeert.
     """,
+
     5: """
-    **Parkeeroverlast en 'Waterbedeffect'**
-    De parkeerbalans in het plan is gebaseerd op te optimistische aannames en normen die niet aansluiten bij de feitelijke autobezit-graad in dit segment. Doordat bezoekersparkeren deels achter een slagboom of op afstand wordt georganiseerd, zal een 'waterbedeffect' optreden: parkeerdruk verschuift naar de omliggende openbare straten in Vroendaal. Dit leidt tot overlast en onveilige situaties door foutparkeren.
+    **Parkeerproblematiek (Waterbedeffect door Slagboom)**
+    De parkeeroplossing is niet realistisch. Bezoekersparkeren wordt deels op eigen terrein achter een slagboom of poort gesitueerd. De praktijk wijst uit dat bezoekers en bezorgdiensten deze drempel mijden en kiezen voor de openbare weg. Hierdoor ontstaat een 'waterbedeffect': de parkeerdruk verschuift naar de reeds drukke en smalle omliggende straten in Vroendaal. De parkeerbalans voldoet daarmee enkel op papier, maar niet in de praktijk. Ook voldoen de afmetingen van de bezoekersparkeerplaatsen niet allemaal aan de CROW normen.
     """,
+
     6: """
-    **Ruimtelijke Insluiting en Aantasting Woongenot**
-    De situering van de bouwmassa's direct grenzend aan de bestaande achtertuinen leidt tot een gevoel van insluiting en een onevenredige inbreuk op het woongenot. Er is geen sprake van een zorgvuldige landschappelijke inpassing of een respectvolle overgangszone tussen de bestaande laagbouw en de nieuwe hoogbouw, wat in strijd is met goede stedenbouwkundige principes.
+    **Ruimtelijke Insluiting**
+    Voor de bewoners aan de omringende straten die grenzen aan het plangebied, leidt het plan tot ernstige ruimtelijke insluiting. Het hoogteverschil tussen de bestaande laagbouw en de geplande 11 meter hoge bebouwing (3 lagen op een halfverdiepte parkeerkelder) is te groot. Er is sprake van een abrupte schaalsprong die het woongenot en de privacy onevenredig aantast ('inclusie-effect').
     """,
+
     7: """
-    **Privacyinbreuk en Directe Inkijk (Art. 5:50 BW)**
-    Het plan voorziet in hoogbouw met balkons/buitenruimtes die direct uitzicht bieden op de privéterreinen van omwonenden. Gezien de beperkte afstand en de hoogte van de bebouwing (tot 4 bouwlagen), is er sprake van een onrechtmatige hinder in de zin van artikel 5:50 BW en een ernstige aantasting van de privacysfeer die in een stedelijke omgeving niet zonder meer geduld hoeft te worden.
+    **Privacyinbreuk door Balkons (Art. 5:50 BW)**
+    De positionering van de balkons en raampartijen in de nieuwe blokken zorgt voor directe, onbelemmerde inkijk in de privédomeinen (tuinen en woonkamers) van omwonenden. Gezien de korte afstand en de hoogte is er sprake van onrechtmatige hinder ex artikel 5:50 BW. Het plan voorziet onvoldoende in maatregelen (zoals ondoorzichtig glas of groene buffers) om deze privacyinbreuk te voorkomen.
     """,
+
     8: """
-    **Verlies van Bezonning (Schaduwhinder)**
-    De hoogbouw zorgt voor significante schaduwwerking op de naastgelegen percelen. Met name in het voor- en najaar en de winter zal de bezonning in tuinen en woonkamers drastisch afnemen. Het ontbreekt aan een onafhankelijke bezonningsstudie die onomstotelijk aantoont dat wordt voldaan aan de 'lichte' TNO-norm voor bezonning. Zonder dit bewijs is het besluit onzorgvuldig.
+    **Verlies van Bezonning en Daglicht**
+    Door de massa en hoogte van de bebouwing (blokken A en B) wordt de bezonning in de tuinen en woningen van omwonenden beperkt, met name in de wintermaanden en het voorjaar. Indiener betwist dat de effecten 'aanvaardbaar' zijn en stelt dat de vermindering van daglichttoetreding leidt tot een significante verslechtering van het woonklimaat die niet is gerechtvaardigd door het bouwbelang.
     """,
+
     9: """
-    **Stedenbouwkundige Dissonantie (Schaalgrootte)**
-    Het plan sluit qua maat, schaal en korrelgrootte niet aan bij de bestaande morfologie van de wijk Vroendaal. De wijk kenmerkt zich door grondgebonden woningen en een open structuur. De massieve, aaneengesloten bouwblokken ('stedelijke wand') vormen een trendbreuk die afbreuk doet aan de ruimtelijke kwaliteit en identiteit van de omgeving (strijd met Welstandsnota/Omgevingsvisie).
+    **Stedenbouwkundige Dissonantie (De 'UFO' in de wijk)**
+    Het plan sluit niet aan bij de bestaande morfologie van Vroendaal/Heugem (grondgebonden, dorpse sfeer). De gekozen typologie ('stedelijke blokken', massief, strakke facades) vormt een trendbreuk en detoneert met de omgeving. Het plan voldoet niet aan de redelijke eisen van welstand omdat het geen relatie aangaat met de omliggende bebouwing, maar zich er juist van afkeert.
     """,
+
     10: """
-    **Risico op Trillingsschade en Zettingen (SBR-Richtlijnen)**
-    Gezien de bodemgesteldheid en de noodzaak tot zwaar hei- of boorwerk, bestaat er een groot risico op schade aan de funderingen en muren van omliggende woningen. Indiener eist dat voorafgaand aan vergunningverlening een nulmeting wordt verricht en een trillingsprognose conform SBR-richtlijnen A (schade) en B (hinder) wordt opgesteld. De gemeente dient aansprakelijkheid voor schade expliciet te borgen.
+    **Funderingsrisico's en Trillingen (Bodemgesteldheid)**
+    Gezien de specifieke bodemopbouw (Löss/Leem en mogelijke geroerde grond) zijn de risico's op zettingsschade aan omliggende woningen bij hei- of trilwerkzaamheden groot. Veel omliggende woningen zijn op beton gefundeerd. Indiener eist een nulmeting en een trillingsmonitoringsplan conform SBR-A (schade) en SBR-B (hinder) als harde vergunningsvoorwaarde.
     """,
+
     11: """
-    **Gezondheidsrisico's Bodemverontreiniging (Voormalige Autosloperij)**
-    De locatie betreft een voormalige autosloperij met een historie van bodemverontreiniging. De garanties dat sanering plaatsvindt zonder risico op verspreiding van gevaarlijke stoffen (o.a. asbest, zware metalen) of explosieven naar de woonomgeving zijn onvoldoende. Het voorzorgsbeginsel vereist dat onomstotelijk vaststaat dat de volksgezondheid tijdens de graafwerkzaamheden niet in gevaar komt.
+    **Bodemverontreiniging (Risico Verspreiding)**
+    De locatie is een voormalige autosloperij. Hoewel sanering is toegezegd, maakt indiener zich zorgen over de verspreiding van restvervuiling (zware metalen, asbest, PAK's) tijdens de graafwerkzaamheden (verwaaiing van stof). Het 'roeren' in deze historisch belaste grond vormt een direct gezondheidsrisico voor de direct omwonenden. De saneringsplannen ontbreken en bieden derhalve geen garantie tegen blootstellingsrisico's.
     """,
+
     12: """
-    **Onacceptabele Bouwroute door Woonwijk**
-    Het bouwlogistieke plan is vaag of ontbreekt. Het leiden van zwaar bouwverkeer door de smalle woonstraten van Vroendaal gedurende een periode van ca. 1,5 tot 2 jaar is onacceptabel vanwege geluidsoverlast, trillingen, onveiligheid en schade aan het wegdek. Indiener eist dat de bouwroute uitsluitend direct via de Rijksweg/N278 wordt gefaciliteerd.
+    **Bouwlogistiek: Geen Bouwverkeer door de Wijk**
+    Het bouwlogistieke plan is onvoldoende uitgewerkt. De infrastructuur van Vroendaal is fysiek ongeschikt voor zwaar bouwverkeer (draaicirkels, aslast). Indiener eist dat in de vergunning wordt vastgelegd dat al het bouwverkeer (aan- en afvoer) uitsluitend direct via de Rijksweg (N278) wordt afgewikkeld en onder geen beding door de woonwijk mag rijden.
     """,
+
     13: """
-    **Hittestress en Verstening (Strijd met Klimaatadaptatie)**
-    Het plan voorziet in massale verstening van een thans groene locatie. Dit draagt bij aan het 'Urban Heat Island' effect, waarbij temperaturen (zoals erkend in gemeentelijke hittekaarten) kunnen oplopen tot 47°C. Dit is in directe strijd met de gemeentelijke ambities uit de Omgevingsvisie 2040 en de 'Klimaatadaptatiestrategie Maastricht' om hittestress tegen te gaan.
+    **Hittestress en 'Verstening' (Klimaatadaptatie)**
+    Het plan voorziet in massale verstening van het perceel. Uit de 'Hittekaart Maastricht' blijkt dat dit gebied nu al risicovol is voor hittestress. Het vervangen van halfverharding/groen door beton en asfalt verergert het 'Urban Heat Island' effect. Dit is in strijd met de gemeentelijke Omgevingsvisie 2040 waarin vergroening en klimaatadaptatie centraal staan.
     """,
+
     14: """
-    **Onterechte Kwalificatie Groen en Bomenkap**
-    In de plannen worden bestaande, volwassen bomen en groenstructuren ten onrechte afgedaan als laagwaardig 'struweel' om kap te legitimeren zonder herplantplicht. Dit is misleidend. Indiener maakt bezwaar tegen de kap en beroept zich op het belang van behoud van biodiversiteit en de regels uit de Bomenverordening/APV. De ecologische waarde wordt onderschat.
+    **Ecologie: Bomen versus 'Struweel'**
+    In de plantoelichting worden bestaande, waardevolle bomen ten onrechte gekwalificeerd als 'struweel' of 'opschot'. Dit lijkt een administratieve truc om de herplantplicht en kapvergunningvereisten te omzeilen. Indiener verzet zich tegen deze kwalificatie en stelt dat de groene buffer een essentiële ecologische en visuele functie vervult die behouden moet blijven.
     """,
+
     15: """
-    **Ontbrekende Cumulatie Stikstof (Natuurtoets)**
-    De uitgevoerde stikstofberekening (AERIUS) is onvolledig en daarmee juridisch onhoudbaar. Er is geen rekening gehouden met de cumulatieve effecten van andere projecten in de directe omgeving (o.a. Porta Mosana). Hierdoor kunnen significant negatieve effecten op het nabijgelegen Natura 2000-gebied (Savelsbos) niet met de vereiste zekerheid worden uitgesloten (strijd met Wet natuurbescherming).
+    **Onvolledige Stikstofberekening (Aerius)**
+    De stikstofberekening (Aerius) rammelt. De verkeersgeneratie in de Aerius-modelinvoer lijkt niet overeen te komen met de werkelijke verkeersprognoses (inclusief bezorgdiensten/bezoekers). Tevens is onduidelijk of cumulatie met andere projecten in de regio (o.a. Porta Mosana) correct is meegenomen. Significant negatieve effecten op Natura 2000 (Savelsbos) zijn derhalve niet met zekerheid uitgesloten.
     """,
+
     16: """
-    **Schijnparticipatie en Negeren Draagvlak**
-    Het participatieproces voldoet niet aan de eisen van de Maastrichtse Participatieverordening. Uit het verslag blijkt dat 421 bewoners een petitie hebben getekend ('NEE tegen dit plan'), maar dit massale gebrek aan draagvlak wordt in de besluitvorming genegeerd. De participatie was een formaliteit ('afvinklijstje') zonder dat er wezenlijk iets met de inbreng van de buurt is gedaan.
+    **Onzorgvuldige Participatie (Draagvlak ontbreekt)**
+    De gemeente stelt dat er geparticipeerd is, maar het participatieverslag geeft een vertekend beeld. Een petitie met 421 handtekeningen ('Huizen Oké, massa NEE') wordt terzijde geschoven. Er is sprake van 'vinkjes-participatie': de plannen zijn ondanks massaal verzet nauwelijks aangepast op essentiële punten (hoogte, ontsluiting, massa). Van een zorgvuldig proces is geen sprake.
     """,
+
     17: """
-    **Vooringenomenheid en Schending Art. 2:4 Awb**
-    Er zijn sterke aanwijzingen dat de gemeente niet onpartijdig heeft gehandeld. Uit interne correspondentie ('Gratis Munitie' mail) blijkt dat ambtenaren is opgedragen bewoners actief informatie te onthouden om juridische posities niet te versterken. Dit is een flagrante schending van het verbod op vooringenomenheid (artikel 2:4 Awb) en het fair-play beginsel, wat het hele besluit vernietigbaar maakt.
+    **Vooringenomenheid (De 'Gratis Munitie' Kwestie)**
+    Er is sprake van schending van het beginsel van onpartijdigheid (art. 2:4 Awb). Uit openbaar geworden interne correspondentie blijkt dat ambtenaren de instructie kregen om bewoners geen informatie te geven om hen geen 'gratis munitie' te verschaffen. Deze houding diskwalificeert de gemeente als objectieve belangenafweger en maakt het besluitvormingsproces onrechtmatig.
     """,
+
     18: """
-    **Strijd met Informatieplicht (Art. 3:11 Awb)**
-    Essentiële stukken (waaronder volledige onderzoeksrapporten naar bodem en stikstof) waren ten tijde van de terinzagelegging niet compleet of niet toegankelijk. Hierdoor zijn belanghebbenden geschaad in hun vermogen om tijdig en adequaat een zienswijze in te dienen. Dit is in strijd met de zorgvuldigheid en de informatieplicht ex artikel 3:11 Awb.
+    **Gebrekkige Informatievoorziening (Woo-verzoeken)**
+    Belanghebbenden zijn stelselmatig benadeeld in hun informatiepositie. Essentiële rapporten waren niet tijdig beschikbaar of moesten via Woo-verzoeken worden afgedwongen. Hierdoor hebben omwonenden niet de eerlijke kans gehad om hun zienswijze ten volle voor te bereiden binnen de termijn, wat in strijd is met het zorgvuldigheidsbeginsel (art. 3:2 Awb).
     """,
+
     19: """
-    **Onzekerheid Nutsvoorzieningen (Netcongestie)**
-    De uitvoerbaarheid van het plan is niet gewaarborgd. Gezien de huidige netcongestieproblematiek in Limburg is er geen garantie dat de nieuwe woningen tijdig op het elektriciteitsnet kunnen worden aangesloten. Het verlenen van een vergunning voor een plan waarvan de feitelijke uitvoerbaarheid onzeker is, is in strijd met de eisen van een goede ruimtelijke ordening.
+    **Uitvoerbaarheid: Netcongestie**
+    In de toelichting wordt te makkelijk voorbijgegaan aan de netcongestie in Limburg. Een bouwplan is pas ruimtelijk aanvaardbaar als de uitvoerbaarheid (stroomaansluiting voor 60+ woningen en warmtepompen) gegarandeerd is. Zonder harde toezegging van Enexis is vergunningverlening voorbarig en in strijd met de eisen van goede ruimtelijke ordening.
     """,
+
     20: """
-    **Negeren van het Burgeralternatief**
-    De werkgroep heeft een concreet en haalbaar alternatief plan ingediend (grondgebonden woningen, passend in de wijk). De gemeente heeft nagelaten dit alternatief serieus te onderzoeken en te vergelijken met het voorliggende plan. Volgens vaste jurisprudentie dient het bevoegd gezag serieuze alternatieven in de belangenafweging te betrekken; dat is hier ten onrechte niet gebeurd.
+    **Alternatievenonderzoek (Burgerplan)**
+    De Werkgroep heeft een realistisch alternatief gepresenteerd: grondgebonden woningen die passen in de wijkstructuur. De gemeente heeft dit alternatief zonder deugdelijke motivering terzijde geschoven. Volgens jurisprudentie dient het bevoegd gezag serieuze alternatieven volwaardig mee te wegen; door vast te houden aan het projectontwikkelaars-plan wordt het algemeen belang van de buurt miskend.
     """
 }
 
 CHECKBOX_LABELS = {
-    1: "Verkeer door de Wijk (Ravensbosch)",
+    1: "Verkeer door de Wijk",
     2: "Veiligheid Spelende Kinderen",
     3: "Onveilige Schoolroute",
     4: "Verkeersinfarct Rijksweg & Hulpdiensten",
@@ -264,3 +287,4 @@ if submitted:
                 
             except Exception as e:
                 st.error(f"Er ging iets mis: {e}")
+
