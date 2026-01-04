@@ -118,6 +118,7 @@ TEXT_BLOCKS = {
     De Werkgroep heeft een realistisch alternatief gepresenteerd: grondgebonden woningen die passen in de wijkstructuur. De gemeente heeft dit alternatief zonder deugdelijke motivering terzijde geschoven. Volgens jurisprudentie dient het bevoegd gezag serieuze alternatieven volwaardig mee te wegen; door vast te houden aan het projectontwikkelaars-plan wordt het algemeen belang van de buurt miskend.
     """
 }
+}
 
 CHECKBOX_LABELS = {
     1: "Verkeer door de Wijk",
@@ -287,4 +288,5 @@ if submitted:
                 
             except Exception as e:
                 st.error(f"Er ging iets mis: {e}")
+
 
