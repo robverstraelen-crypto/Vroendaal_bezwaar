@@ -12,11 +12,6 @@ except:
     # Fallback voor als je lokaal test zonder secrets file, of als de key mist
     client = None
 
-# --- JURIDISCHE TEKSTBLOKKEN (DE MUNITIE) ---
-TEXT_BLOCKS = {
-    # JURIDISCHE TEKSTBLOKKEN MAPPING (REVISIE 2 - GEBASEERD OP DRAFT 6)
-# Deze teksten zijn specifiek gemaakt voor de situatie Rijksweg 39 / Vroendaal.
-
 TEXT_BLOCKS = {
     1: """
     **Strijdigheid met Verkeersstructuur (Sluipverkeer via 'De Knip')**
@@ -288,5 +283,6 @@ if submitted:
                 
             except Exception as e:
                 st.error(f"Er ging iets mis: {e}")
+
 
 
