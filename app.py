@@ -192,7 +192,7 @@ def generate_zienswijze(naam, adres, datum, selected_ids, personal_note):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            temperature=0.5
+            temperature=0.5,
             max_tokens=4000
         )
         return response.choices[0].message.content
@@ -289,6 +289,7 @@ if submitted:
                 
             except Exception as e:
                 st.error(f"Er ging iets mis: {e}")
+
 
 
 
