@@ -157,6 +157,12 @@ def generate_zienswijze(naam, adres, datum, selected_ids, personal_note):
     - Formeel, dwingend, juridisch correct, maar begrijpelijk.
     - Gebruik termen als: 'strijd met goede ruimtelijke ordening', 'onzorgvuldige voorbereiding', 'aantasting woon- en leefklimaat'.
     - Wees scherp op de inhoud, maar beleefd in de vorm.
+
+    CRUCIALE INSTRUCTIE VOOR DE INHOUD:
+    1. De gebruiker heeft specifieke bezwaarpunten aangevinkt. Je MOET ELK geselecteerd punt afzonderlijk behandelen in de brief.
+    2. Het is VERBODEN om punten weg te laten of te sterk samen te vatten. Als er 15 punten zijn aangeleverd, moet de brief 15 inhoudelijke argumenten bevatten.
+    3. Je mag punten wel groeperen onder tussenkopjes (bijv. 'Verkeer', 'Woonklimaat', 'Procedure'), maar binnen die kopjes moet elk specifiek argument (Punt X, Punt Y) duidelijk terugkomen.
+    4. Gebruik de aangeleverde juridische teksten als basis, maar zorg dat de zinnen vloeiend lopen.
     
     INSTRUCTIE:
     1. Begin met de formele aanhef aan de Gemeenteraad van Maastricht.
@@ -186,7 +192,8 @@ def generate_zienswijze(naam, adres, datum, selected_ids, personal_note):
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
-            temperature=0.7
+            temperature=0.5
+            max_tokens=4000
         )
         return response.choices[0].message.content
     except Exception as e:
@@ -282,6 +289,7 @@ if submitted:
                 
             except Exception as e:
                 st.error(f"Er ging iets mis: {e}")
+
 
 
 
