@@ -5,293 +5,149 @@ from fpdf import FPDF
 import datetime
 
 # --- CONFIGURATIE ---
-# Haal de API key op uit de geheime instellingen van Streamlit
 try:
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 except:
-    # Fallback voor als je lokaal test zonder secrets file, of als de key mist
     client = None
 
+# De bijgewerkte teksten (20 stuks)
 TEXT_BLOCKS = {
-    1: """
-    **Strijdigheid met Verkeersstructuur (Sluipverkeer via 'De Knip')**
-    Het plan leidt het verkeer van 'Blok A' via de interne wegenstructuur (Bruysterbosch/Bunderbosch/Ravensbosch/Jansbosch/Savelsbosch). Dit is in strijd met het principe van 'Duurzaam Veilig'. Deze straten zijn ingericht als Erftoegangsweg (30km/h) en niet berekend op de toevoeging van extra ontsluitingsverkeer voor 43 appartementen plus bezoekers. De voorgestelde verkeersafwikkeling tast de leefbaarheid onevenredig aan en leidt tot ongewenst sluipverkeer door de wijk.
-    """,
-
-    2: """
-    **Aantasting Verblijfsfunctie en Veiligheid Kinderen**
-    De meeste straten in Vroendaal functioneren feitelijk als 'woonerf' (verblijfsgebied) waar kinderen op straat spelen. De toename van verkeersintensiteit door het plan doorbreekt dit karakter. De gemeente faciliteert hier een situatie waarin de auto domineert boven de spelende bezoeker, wat haaks staat op de gemeentelijke ambities voor veilige, kindvriendelijke wijken. De objectieve verkeersveiligheid komt in het geding.
-    """,
-
-    3: """
-    **Risico Schoolroute (Kruising Savelsbosch/Rijksweg)**
-    De verkeersgeneratie van het plan interfereert met de langzaam-verkeersroute richting basisscholen en Porta Mosana (route Savelsbosch). Het plan voorziet niet in adequate veiligheidsmaatregelen voor overstekende fietsers en voetgangers op de kruispunten die zwaarder belast gaan worden. Zonder fysieke aanpassing van de infrastructuur is de veiligheid van schoolgaande kinderen niet gewaarborgd.
-    """,
-
-    4: """
-    **Verkeersveiligheid Rijksweg N278 (Inkorten Uitvoegstrook)**
-    De ontsluiting van 'Blok B' op de Rijksweg (N278) is verkeerstechnisch onaanvaardbaar. Het plan voorziet in het opsplitsen/inkorten van de bestaande opstelstrook/uitvoegstrook. Dit creëert een 'weefvak' dat te kort is volgens CROW-richtlijnen. Dit leidt tot reëel gevaar van terugslag van wachtend verkeer op de hoofdrijbaan (50 km/u), wat de doorstroming (van hulpdiensten) op deze cruciale route naar het MUMC+ blokkeert.
-    """,
-
-    5: """
-    **Parkeerproblematiek (Waterbedeffect door Slagboom)**
-    De parkeeroplossing is niet realistisch. Bezoekersparkeren wordt deels op eigen terrein achter een slagboom of poort gesitueerd. De praktijk wijst uit dat bezoekers en bezorgdiensten deze drempel mijden en kiezen voor de openbare weg. Hierdoor ontstaat een 'waterbedeffect': de parkeerdruk verschuift naar de reeds drukke en smalle omliggende straten in Vroendaal. De parkeerbalans voldoet daarmee enkel op papier, maar niet in de praktijk. Ook voldoen de afmetingen van de bezoekersparkeerplaatsen niet allemaal aan de CROW normen.
-    """,
-
-    6: """
-    **Ruimtelijke Insluiting**
-    Voor de bewoners aan de omringende straten die grenzen aan het plangebied, leidt het plan tot ernstige ruimtelijke insluiting. Het hoogteverschil tussen de bestaande laagbouw en de geplande 11 meter hoge bebouwing (3 lagen op een halfverdiepte parkeerkelder) is te groot. Er is sprake van een abrupte schaalsprong die het woongenot en de privacy onevenredig aantast ('inclusie-effect').
-    """,
-
-    7: """
-    **Privacyinbreuk door Balkons (Art. 5:50 BW)**
-    De positionering van de balkons en raampartijen in de nieuwe blokken zorgt voor directe, onbelemmerde inkijk in de privédomeinen (tuinen en woonkamers) van omwonenden. Gezien de korte afstand en de hoogte is er sprake van onrechtmatige hinder ex artikel 5:50 BW. Het plan voorziet onvoldoende in maatregelen (zoals ondoorzichtig glas of groene buffers) om deze privacyinbreuk te voorkomen.
-    """,
-
-    8: """
-    **Verlies van Bezonning en Daglicht**
-    Door de massa en hoogte van de bebouwing (blokken A en B) wordt de bezonning in de tuinen en woningen van omwonenden beperkt, met name in de wintermaanden en het voorjaar. Indiener betwist dat de effecten 'aanvaardbaar' zijn en stelt dat de vermindering van daglichttoetreding leidt tot een significante verslechtering van het woonklimaat die niet is gerechtvaardigd door het bouwbelang.
-    """,
-
-    9: """
-    **Stedenbouwkundige Dissonantie (De 'UFO' in de wijk)**
-    Het plan sluit niet aan bij de bestaande morfologie van Vroendaal/Heugem (grondgebonden, dorpse sfeer). De gekozen typologie ('stedelijke blokken', massief, strakke facades) vormt een trendbreuk en detoneert met de omgeving. Het plan voldoet niet aan de redelijke eisen van welstand omdat het geen relatie aangaat met de omliggende bebouwing, maar zich er juist van afkeert.
-    """,
-
-    10: """
-    **Funderingsrisico's en Trillingen (Bodemgesteldheid)**
-    Gezien de specifieke bodemopbouw (Löss/Leem en mogelijke geroerde grond) zijn de risico's op zettingsschade aan omliggende woningen bij hei- of trilwerkzaamheden groot. Veel omliggende woningen zijn op beton gefundeerd. Indiener eist een nulmeting en een trillingsmonitoringsplan conform SBR-A (schade) en SBR-B (hinder) als harde vergunningsvoorwaarde.
-    """,
-
-    11: """
-    **Bodemverontreiniging (Risico Verspreiding)**
-    De locatie is een voormalige autosloperij. Hoewel sanering is toegezegd, maakt indiener zich zorgen over de verspreiding van restvervuiling (zware metalen, asbest, PAK's) tijdens de graafwerkzaamheden (verwaaiing van stof). Het 'roeren' in deze historisch belaste grond vormt een direct gezondheidsrisico voor de direct omwonenden. De saneringsplannen ontbreken en bieden derhalve geen garantie tegen blootstellingsrisico's.
-    """,
-
-    12: """
-    **Bouwlogistiek: Geen Bouwverkeer door de Wijk**
-    Het bouwlogistieke plan is onvoldoende uitgewerkt. De infrastructuur van Vroendaal is fysiek ongeschikt voor zwaar bouwverkeer (draaicirkels, aslast). Indiener eist dat in de vergunning wordt vastgelegd dat al het bouwverkeer (aan- en afvoer) uitsluitend direct via de Rijksweg (N278) wordt afgewikkeld en onder geen beding door de woonwijk mag rijden.
-    """,
-
-    13: """
-    **Hittestress en 'Verstening' (Klimaatadaptatie)**
-    Het plan voorziet in massale verstening van het perceel. Uit de 'Hittekaart Maastricht' blijkt dat dit gebied nu al risicovol is voor hittestress. Het vervangen van halfverharding/groen door beton en asfalt verergert het 'Urban Heat Island' effect. Dit is in strijd met de gemeentelijke Omgevingsvisie 2040 waarin vergroening en klimaatadaptatie centraal staan.
-    """,
-
-    14: """
-    **Ecologie: Bomen versus 'Struweel'**
-    In de plantoelichting worden bestaande, waardevolle bomen ten onrechte gekwalificeerd als 'struweel' of 'opschot'. Dit lijkt een administratieve truc om de herplantplicht en kapvergunningvereisten te omzeilen. Indiener verzet zich tegen deze kwalificatie en stelt dat de groene buffer een essentiële ecologische en visuele functie vervult die behouden moet blijven.
-    """,
-
-    15: """
-    **Onvolledige Stikstofberekening (Aerius)**
-    De stikstofberekening (Aerius) rammelt. De verkeersgeneratie in de Aerius-modelinvoer lijkt niet overeen te komen met de werkelijke verkeersprognoses (inclusief bezorgdiensten/bezoekers). Tevens is onduidelijk of cumulatie met andere projecten in de regio (o.a. Porta Mosana) correct is meegenomen. Significant negatieve effecten op Natura 2000 (Savelsbos) zijn derhalve niet met zekerheid uitgesloten.
-    """,
-
-    16: """
-    **Onzorgvuldige Participatie (Draagvlak ontbreekt)**
-    De gemeente stelt dat er geparticipeerd is, maar het participatieverslag geeft een vertekend beeld. Een petitie met 421 handtekeningen ('Huizen Oké, massa NEE') wordt terzijde geschoven. Er is sprake van 'vinkjes-participatie': de plannen zijn ondanks massaal verzet nauwelijks aangepast op essentiële punten (hoogte, ontsluiting, massa). Van een zorgvuldig proces is geen sprake.
-    """,
-
-    17: """
-    **Vooringenomenheid (De 'Gratis Munitie' Kwestie)**
-    Er is sprake van schending van het beginsel van onpartijdigheid (art. 2:4 Awb). Uit openbaar geworden interne correspondentie blijkt dat ambtenaren de instructie kregen om bewoners geen informatie te geven om hen geen 'gratis munitie' te verschaffen. Deze houding diskwalificeert de gemeente als objectieve belangenafweger en maakt het besluitvormingsproces onrechtmatig.
-    """,
-
-    18: """
-    **Gebrekkige Informatievoorziening (Woo-verzoeken)**
-    Belanghebbenden zijn stelselmatig benadeeld in hun informatiepositie. Essentiële rapporten waren niet tijdig beschikbaar of moesten via Woo-verzoeken worden afgedwongen. Hierdoor hebben omwonenden niet de eerlijke kans gehad om hun zienswijze ten volle voor te bereiden binnen de termijn, wat in strijd is met het zorgvuldigheidsbeginsel (art. 3:2 Awb).
-    """,
-
-    19: """
-    **Uitvoerbaarheid: Netcongestie**
-    In de toelichting wordt te makkelijk voorbijgegaan aan de netcongestie in Limburg. Een bouwplan is pas ruimtelijk aanvaardbaar als de uitvoerbaarheid (stroomaansluiting voor 60+ woningen en warmtepompen) gegarandeerd is. Zonder harde toezegging van Enexis is vergunningverlening voorbarig en in strijd met de eisen van goede ruimtelijke ordening.
-    """,
-
-    20: """
-    **Alternatievenonderzoek (Burgerplan)**
-    De Werkgroep heeft een realistisch alternatief gepresenteerd: grondgebonden woningen die passen in de wijkstructuur. De gemeente heeft dit alternatief zonder deugdelijke motivering terzijde geschoven. Volgens jurisprudentie dient het bevoegd gezag serieuze alternatieven volwaardig mee te wegen; door vast te houden aan het projectontwikkelaars-plan wordt het algemeen belang van de buurt miskend.
-    """
+    1: "Misleiding van de Raad over Contractdatum\nIk maak ernstig bezwaar tegen de onrechtmatige start van deze procedure. Het College heeft de Gemeenteraad in de Raadsinformatiebrief (RIB) van 26 november 2025 geïnformeerd dat de anterieure overeenkomst "is aangegaan". Uit het dossier blijkt echter dat deze pas op 22 december is getekend. De Raad – en daarmee de burger – is bewust op het verkeerde been gezet over de juridische status van het project. Een besluit dat rust op feitelijk onjuiste informatie aan het hoogste bestuursorgaan is in strijd met het zorgvuldigheidsbeginsel (art. 3:2 Awb) en de actieve inlichtingenplicht. Ik verzoek u de procedure te staken wegens onbehoorlijk bestuur.",
+    2: "Ongeldige Contractpartij (KvK-kwestie)\nUit onderzoek blijkt dat de gemeente een Anterieure Overeenkomst heeft gesloten met een entiteit die op het moment van tekenen (22 december 2025) juridisch niet bestond of handelde onder een niet-geregistreerd KvK-nummer. Een overheidsorgaan kan geen rechtsgeldige privaatrechtelijke overeenkomsten sluiten met niet-bestaande partijen. Hierdoor ontbreekt de wettelijke basis voor het kostenverhaal en de planschadeafwenteling, wat een dwingende voorwaarde is voor het vaststellen van een omgevingsplan. Omdat de contractuele basis onder het plan ontbreekt, is het besluit tot vaststelling van het TAM-omgevingsplan juridisch onhoudbaar en vernietigbaar.",
+    3: "Strijd met Didam-arrest (Onderhandse gunning)\nDe gronduitgifte en de planologische medewerking zijn één-op-één gegund aan de ontwikkelaar zonder openbare selectieprocedure. Dit is in strijd met het Didam-arrest, dat gelijke kansen eist voor marktpartijen. De gemeente heeft verzuimd vooraf kenbaar te maken waarom deze specifieke ontwikkelaar als enige in aanmerking zou komen. Doordat in de anterieure overeenkomst (art. 20) de Didam-publicatie als opschortende voorwaarde is opgenomen, en deze termijn nog liep tijdens de start van de procedure, is het besluit prematuur. Ik maak bezwaar tegen deze onrechtmatige bevoordeling die de transparantie van het openbaar bestuur schaadt",
+    4: "Stikstofberekening en Intern Salderen (Jurisprudentie 2026)\nDe conclusie in het besluit dat er geen negatieve effecten zijn op Natura 2000-gebieden, is gebaseerd op een stikstofberekening die uitgaat van 'intern salderen' met oude bedrijfsrechten. Gezien de recente jurisprudentie (o.a. uitspraak 14 januari 2026) is het inzetten van latente ruimte ('slapende vergunningen') juridisch uiterst wankel. De gemeente verzuimt aan te tonen dat de voormalige bedrijfsactiviteiten daadwerkelijk en recentelijk plaatsvonden. Zonder een ecologische toets die voldoet aan de allerlaatste stand van de rechtspraak, is het vaststellen van dit plan in strijd met de Wet natuurbescherming en riskeert de gemeente directe vernietiging bij de Raad van State.",
+    5: "Achterhouden van Cruciale Veiligheidsstukken\nDe terinzagelegging van het plan is onvolledig en daarmee onwettig. In de Anterieure Overeenkomst wordt verwezen naar essentiële bijlagen zoals het 'Veiligheidsplan Sanering', de 'Civieltechnische tekening Rijksweg' en diverse bodemonderzoeken. Deze stukken ontbreken in het publieke dossier op Omgevingswet.overheid.nl. Burgers kunnen hierdoor geen volwaardige zienswijze indienen over hun eigen veiligheid en gezondheid. Het argument van de gemeente dat deze stukken "niet cruciaal" zijn, is een schending van het recht op informatie. Ik eis dat de termijn wordt heropend zodra het dossier compleet is, conform de eisen van de Algemene wet bestuursrecht.",
+    6: "Onjuiste Footprint (1.475 m² vs 2.230 m²)\nDe ruimtelijke onderbouwing is gebaseerd op een feitelijke onjuistheid. De toelichting stelt dat de footprint van het gebouw ca. 1.475 m² bedraagt. Dit is misleidend. Het plan voorziet in een halfverdiepte parkeerkelder die bouwkundig deel uitmaakt van de constructie en tot aan de perceelsgrenzen reikt. De daadwerkelijke footprint – en daarmee de verstening van het perceel – bedraagt circa 2.230 m². De impact op de bodem en de waterhuishouding is hierdoor ruim 50% groter dan aan de Raad wordt voorgespiegeld. Een bestemmingsplan waarvan de toelichting (tekst) zo ernstig afwijkt van de feitelijke situatie (kaart), kan niet worden vastgesteld.",
+    7: "Strijd met Gebiedsprofiel Stadsrand (11 meter)\nHet plangebied valt binnen het profiel 'Stadsrand' van de Omgevingsvisie. Hier geldt als expliciet uitgangspunt dat de bouwhoogte beperkt blijft tot maximaal 10 meter en dat de bebouwing een 'dorpse maat' moet hebben. Het voorliggende plan voorziet in massieve blokken van 11 meter hoog (exclusief opbouw). Hiermee wijkt de gemeente zonder noodzaak af van haar eigen beleidskaders. De financiële optimalisatie van het bouwprogramma (meer lagen = meer winst) is geen ruimtelijke rechtvaardiging om de overgang naar het landschap te verstoren met stedelijke hoogbouw die niet past in de korrelgrootte van Vroendaal.",
+    8: "Afstand tot voorzieningen groter dan 500 meter\nDe gemeente rechtvaardigt de hoogbouw met de stelling dat de locatie op "circa 500 meter" van winkelcentrum De Roserije ligt, wat verdichting zou toestaan. Dit is feitelijk onjuist. De werkelijke loopafstand via de openbare weg bedraagt circa 750 meter (50% verder). Solitaire winkels dichterbij (zoals een AH of bloemist) kwalificeren volgens de Omgevingsvisie niet als 'centrumvoorziening' die hoogstedelijke verdichting legitimeert. Doordat niet wordt voldaan aan het nabijheidscriterium, geldt de hoofdregel van de Stadsrand: terughoudendheid en 'per saldo nul woningen toevoegen'. Het plan voldoet dus niet aan een Evenwichtige Toedeling van Functies aan Locaties (EFTAL).",
+    9: "Stedenbouwkundige Schaalbreuk\nHet plan wordt gepresenteerd als een "stedenbouwkundige afronding" van de wijk. Dit is een onbegrijpelijke kwalificatie. De bestaande omgeving (Vroendaal/Heugem) kenmerkt zich door grondgebonden woningen, patio's en een fijnmazige structuur. Het plaatsen van twee massieve, aaneengesloten appartementenblokken op een sokkel creëert geen aansluiting, maar een abrupte schaalbreuk. Het gebouw landt als een autonoom, gebiedsvreemd object ('UFO') in de wijk. De Commissie Ruimtelijke Kwaliteit heeft verzuimd te toetsen of deze typologie wel past bij de identiteit van de plek, zoals artikel 1.3 van de Omgevingswet vereist.",
+    10: "Technische Onuitvoerbaarheid Wateropgave (Wadi vs. Kelder)\nDe waterparagraaf stelt dat hemelwater wordt opgevangen in wadi's op eigen terrein. Dit is technisch onhoudbaar. Gezien de enorme footprint van de parkeerkelder (2.230 m²) is er nauwelijks 'volle grond' beschikbaar. Het aanleggen van wadi's in de smalle reststroken naast de kelderwanden leidt tot grote risico's op vochtdoorslag en instabiliteit. Indien de ontwikkelaar kiest voor ondergrondse infiltratiekratten, is de toelichting (die spreekt over zichtbaar groen/wadi's) misleidend. Bovendien is de Limburgse lössbodem slecht doorlatend, wat bij dit enorme verharde oppervlak onherroepelijk leidt tot wateroverlast voor de buren.",
+    11: "'The Fishbowl Effect' (Privacy-inbreuk)\nDHet plan tast mijn privacy op onaanvaardbare wijze aan. Waar ik nu grens aan een rustig perceel, kijken straks vanuit vele appartementenbewoners vanaf balkons rechtstreeks mijn tuin en/of woon- en slaapkamer in. De verhouding (vele kijkers op enkele tuinen/huizen) creëert een 'viskom-effect': ik voel mij permanent bekeken. Doordat de bestaande groene buffer (bomen) fysiek grotendeels wordt geruimd en niet zal worden vervangen met bomen van de huidige omvang ontbreekt een gedegen vorm van afscherming.  De gemeente weegt de belangen van de ontwikkelaar zwaarder dan mijn fundamentele recht op een ongestoorde leefomgeving en huisvrede.",
+    12: "Bezonning: De 'Winterdip'\n De gemeente heeft verzuimd een formele bezonningsstudie ter inzage te leggen, waardoor ik niet kan controleren wat de impact is op mijn woning. Uit eigen simulaties blijkt dat het gebouw (11 meter hoog) in de wintermaanden (november-februari) mijn woning grotendeels in de schaduw zet. Dat het plan wellicht voldoet aan de 'lichte' TNO-norm (die pas telt vanaf 19 februari), is voor mij onacceptabel. Juist in de donkere maanden is zonlicht essentieel voor mijn woongenot en energierekening. Het plan ontneemt mij dit licht op onevenredige wijze.",
+    13: "Ambtelijke Manipulatie Verkeersadvies\nIk maak bezwaar tegen de verkeerskundige onderbouwing omdat deze tot stand is gekomen door ambtelijke manipulatie. Uit Woo-stukken blijkt dat ambtenaren de opdracht gaven om voor de ontsluiting "mooie zinnen te formuleren" omdat wethouders niet naar alternatieven wilden luisteren. Dit bewijst dat het verkeersadvies niet objectief is, maar een politiek besteld resultaat. Een bestemmingsplan dat rust op een gemanipuleerd advies is in strijd met het zorgvuldigheidsbeginsel en kan geen standhouden bij de rechter. Ik eis een onafhankelijk nieuw verkeersonderzoek.",
+    14: "Onveilige Ontsluiting \nHet plan knipt de ontsluiting op: 43 woningen worden via de rustige woonstraten (Bruysterbosch/Bunderbosch/Jansbosch/Ravensbosch) geleid in plaats van via de rechtstreekse ontsluiting op de Rijksweg. Hiervoor ontbreekt elke noodzaak. De smalle woonstraten, waar veel kinderen spelen, zijn niet berekend op deze toename van verkeer en bezorgdiensten. Het creëert onveilige situaties en sluipverkeer door de wijk. De gemeente heeft nagelaten serieus te onderzoeken of een volledige ontsluiting op de Rijksweg (of via een ventweg) mogelijk is , of hiervan de resultaten hiervan toe publiceren. De keuze voor Bunderbosch is willekeur en tast de verkeersveiligheid in mijn wijk aan.",
+    15: "'Blanco Cheque' Rijksweg (Ontbrekende Tekeningen)\nDe aansluiting van Plandeel B op de N278 (Rijksweg) is verkeerskundig onverantwoord. In de stukken ontbreken gedetailleerde inrichtingstekeningen met zichtlijnen, draaicirkels en opstelstroken. Hierdoor kan niemand controleren of de inrit veilig is in combinatie met het drukke fietspad en het 50 km/u-verkeer. De gemeente vraagt de Raad in te stemmen met een 'blanco cheque', waarbij de veiligheid pas later wordt bekeken. Dit is in strijd met de rechtszekerheid. Ik eis dat de vergunning wordt geweigerd zolang de civieltechnische veiligheid niet onomstotelijk vaststaat.",
+    16: "Cumulatie Milieuperron en Parkeren\nDe verkeersmodellen negeren de realiteit van het naastgelegen milieuperron. Op piekmomenten staan hier wachtrijen met auto's. De cumulatie van dit verkeer met de bewoners en bezoekers van 66 nieuwe woningen leidt tot een verkeersinfarct en gevaarlijke manoeuvres. Daarnaast is de parkeerbalans in het plan te krap en zijn bezoekersplaatsen niet vrij-toegankelijk. Dit leidt onvermijdelijk tot parkeeroverlast rondom de hoofdingang van gebouw B en daarmee de bereikbaarheid van het milieuperron. Ook zal, indien het milieuperron op deze plaats wordt gehandhaafd, de combinatie van bezoeker aan dit perron en het onvermijdelijke parkeren op straat tot serieuze verkeerscongestie zorgen.",
+    17: "Het Negeren van de Rotonde\nBewoners en zelfs de wethouder hebben geopperd om een rotonde aan te leggen als structurele oplossing voor de onveilige Rijksweg. Dit alternatief is zonder goede motivering terzijde geschoven ("past niet in richtlijnen"). De gemeente weigert uit te leggen waarom verkeersveiligheid geen reden is om van richtlijnen af te wijken. Het frustreren van een veilige oplossing (rotonde) ten gunste van een goedkope, onveilige uitrit getuigt van onbehoorlijk bestuur. Ik eis dat de besluitvorming wordt opgeschort tot de rotonde-variant serieus is doorgerekend.",
+    18: "Mismatch Woonbehoefte\nHet plan voorziet overwegend in kleine appartementen. Dit sluit niet aan bij de demografische behoefte van Vroendaal. De vergrijzende wijk vraagt om ruime, levensloopbestendige appartementen voor senioren die willen doorstromen vanuit hun gezinswoning. Door te kiezen voor maximale aantallen (kleine units) in plaats van kwaliteit, bouwt de gemeente voor de leegstand van de toekomst. Deze 'schoenendozen' op een locatie ver van het centrum hebben een slechte marktpositie. Het plan voldoet daarmee niet aan de kwalitatieve eisen van de Woonvisie Maastricht.",
+    19: "Negeren Burgeralternatief (Participatie)\nDe gemeente stelt dat er geparticipeerd is, maar heeft het constructieve 'Burgeralternatief' (grondgebonden woningen, passend in de maat) zonder serieus onderzoek terzijde geschoven. De participatie is gereduceerd tot een informatieavond zonder invloed. In het verslag wordt de massale weerstand van de buurt gebagatelliseerd. Dit is in strijd met de geest van de Omgevingswet, die vroegtijdige en volwaardige participatie eist. Ik voel mij als burger niet gehoord en eis dat het Burgeralternatief alsnog als volwaardig scenario wordt getoetst.",
+    20: "**Bodemverontreiniging en Volksgezondheid**\nHet plangebied is historisch belast en uit bodemonderzoeken blijkt ernstige verontreiniging. De gemeente kiest ervoor om het bestemmingsplan vast te stellen voordat er een goedgekeurd saneringsplan ligt. Hiermee worden de risico's voor de volksgezondheid (verspreiding van lood/asbeststof tijdens de bouw) doorgeschoven naar de uitvoering. Gezien de nabijheid van woningen is dit onverantwoord. Ik eis dat de procedure wordt gestopt totdat de veiligheid van omwonenden tijdens de sanering onomstotelijk is geborgd in een goedgekeurd en openbaar plan."
 }
 
 CHECKBOX_LABELS = {
-    1: "Verkeer door de Wijk",
-    2: "Veiligheid Spelende Kinderen",
-    3: "Onveilige Schoolroute",
-    4: "Verkeersinfarct Rijksweg & Hulpdiensten",
-    5: "Parkeeroverlast",
-    6: "Insluiting Achtertuinen",
-    7: "Privacy & Inkijk (Balkons)",
-    8: "Verlies van Zonlicht",
-    9: "Massale Hoogbouw (Niet passend)",
-    10: "Trillingsschade & Fundering",
-    11: "Gevaarlijke Bodem (Asbest)",
-    12: "Bouwverkeer door de Wijk",
-    13: "Hittestress & Verstening",
-    14: "Kap van Bomen",
-    15: "Stikstof & Natuur",
-    16: "Schijnparticipatie",
-    17: "Vooringenomenheid Gemeente",
-    18: "Geheime/Ontbrekende Stukken",
-    19: "Netcongestie (Stroom)",
-    20: "Steun Burgeralternatief"
+    1: "1. Misleiding over Contractdatum",
+    2: "2. Ongeldige Contractpartij (KvK)",
+    3: "3. Didam-arrest (Gunning)",
+    4: "4. Stikstof (Jurisprudentie 2026)",
+    5: "5. Ontbrekende Veiligheidsstukken",
+    6: "6. Onjuiste Footprint (1.475 vs 2.230)",
+    7: "7. Bouwhoogte (11m vs 10m)",
+    8: "8. Misleidende Afstand (750m vs 500m)",
+    9: "9. Stedenbouwkundige Schaalbreuk",
+    10: "10. Water/Wadi Onuitvoerbaar",
+    11: "11. Privacy/Inkijk (Fishbowl)",
+    12: "12. Bezonning (Winterdip)",
+    13: "13. Gemanipuleerd Verkeersadvies",
+    14: "14. Onveilige Ontsluiting",
+    15: "15. Ontbrekende Tekeningen N278",
+    16: "16. Milieuperron & Parkeren",
+    17: "17. Negeren Rotonde-oplossing",
+    18: "18. Verkeerde Woningtypes",
+    19: "19. Negeren Burgeralternatief",
+    20: "20. Bodem & Volksgezondheid"
 }
 
-# --- FUNCTIES ---
-
+# --- AI FUNCTIE ---
 def generate_zienswijze(naam, adres, datum, selected_ids, personal_note):
     if not client:
-        return "⚠️ Er is geen API key ingesteld. Ik kan geen brief genereren. Controleer je 'Secrets' in Streamlit."
+        return "⚠️ Geen API key gevonden."
 
-    # Bouw de juridische argumentatie op
     juridische_argumenten = ""
     for i in selected_ids:
-        juridische_argumenten += f"- PUNT {i}: {TEXT_BLOCKS[i]}\n"
+        juridische_argumenten += f"- {TEXT_BLOCKS[i]}\n"
 
-    # De System Prompt (De Senior Advocaat Persona)
     system_prompt = """
-    Je bent een senior procesadvocaat bestuursrecht, gespecialiseerd in de Omgevingswet en de gemeente Maastricht.
-    Je schrijft een formele Zienswijze namens een bewoner tegen het plan 'Woningbouw Vroendaal'.
+    Je bent een senior procesadvocaat bestuursrecht. Je schrijft de INHOUDELIJKE ONDERBOUWING van een Zienswijze (ter aanvulling op een eerder pro-forma ingediend bezwaar).
     
-    STIJL:
-    - Formeel, dwingend, juridisch correct, maar begrijpelijk.
-    - Gebruik termen als: 'strijd met goede ruimtelijke ordening', 'onzorgvuldige voorbereiding', 'aantasting woon- en leefklimaat'.
-    - Wees scherp op de inhoud, maar beleefd in de vorm.
-
-    CRUCIALE INSTRUCTIE VOOR DE INHOUD:
-    1. De gebruiker heeft specifieke bezwaarpunten aangevinkt. Je MOET ELK geselecteerd punt afzonderlijk behandelen in de brief.
-    2. Het is VERBODEN om punten weg te laten of te sterk samen te vatten. Als er 15 punten zijn aangeleverd, moet de brief 15 inhoudelijke argumenten bevatten.
-    3. Je mag punten wel groeperen onder tussenkopjes (bijv. 'Verkeer', 'Woonklimaat', 'Procedure'), maar binnen die kopjes moet elk specifiek argument (Punt X, Punt Y) duidelijk terugkomen.
-    4. Gebruik de aangeleverde juridische teksten als basis, maar zorg dat de zinnen vloeiend lopen.
-    
-    INSTRUCTIE:
-    1. Begin met de formele aanhef aan de Gemeenteraad van Maastricht.
-    2. Integreer de 'Persoonlijke Toevoeging' van de gebruiker in de inleiding om specifiek belang aan te tonen. Herschrijf dit zodat het professioneel klinkt.
-    3. Werk de aangeleverde JURIDISCHE PUNTEN uit tot een lopend, logisch betoog. Gebruik tussenkopjes.
-    4. Sluit af met de eis tot afwijzing van het plan en verzoek om bevestiging.
-    5. Onderteken met Naam en Adres.
+    FOCUS:
+    - Gebruik de verstrekte argumenten integraal. 
+    - De toon is strijdvaardig, juridisch technisch en uiterst kritisch richting het College van B&W van Maastricht.
+    - Termen: 'onbehoorlijk bestuur', 'schending van het vertrouwensbeginsel', 'prematuur besluit', 'gebrekkige motivering'.
+    - De brief moet aan de Gemeenteraad gericht zijn.
     """
 
     user_prompt = f"""
-    GEGEVENS INDIENER:
-    Naam: {naam}
-    Adres: {adres}
-    Datum: {datum}
+    INDIENER: {naam}, {adres}. DATUM: {datum}.
+    PERSOONLIJK BELANG: {personal_note}
+    GESELECTEERDE JURIDISCHE PUNTEN: {juridische_argumenten}
     
-    PERSOONLIJKE TOEVOEGING (Integreer dit als belang):
-    "{personal_note}"
-    
-    JURIDISCHE PUNTEN (Verwerk deze argumenten in de brief):
-    {juridische_argumenten}
+    Schrijf een volledige, formele brief.
     """
 
-    try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.5,
-            max_tokens=4000
-        )
-        return response.choices[0].message.content
-    except Exception as e:
-        return f"Er ging iets mis bij de AI connectie: {str(e)}"
+    response = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[{"role": "system", "content": system_prompt}, {"role": "user", "content": user_prompt}],
+        temperature=0.4
+    )
+    return response.choices[0].message.content
 
 def create_pdf(text):
     pdf = FPDF()
     pdf.add_page()
-    pdf.set_font("Arial", size=11)
-    # Simpele encoding fix voor PDF (vervangt niet-ondersteunde karakters)
+    pdf.set_font("Arial", size=10)
     clean_text = text.encode('latin-1', 'replace').decode('latin-1')
-    pdf.multi_cell(0, 6, clean_text)
+    pdf.multi_cell(0, 5, clean_text)
     return pdf.output(dest="S").encode("latin-1")
 
-# --- DE WEBSITE (UI) ---
-
-st.set_page_config(page_title="Verzet Vroendaal", page_icon="⚖️")
-
-st.title("⚖️ Zienswijze Generator Vroendaal")
-st.markdown("""
-**Instructie:**
-Met deze tool genereert u een juridisch onderbouwde zienswijze tegen het nieuwbouwplan.
-Vul uw gegevens in, vink uw bezwaren aan en klik op 'Genereer'.
-""")
+# --- UI ---
+st.set_page_config(page_title="Zienswijze Vroendaal 2.0", layout="wide")
+st.title("⚖️ Zienswijze Generator Vroendaal 2.0")
+st.warning("Deze versie bevat de geüpdatete juridische bezwaren (versie januari 2026).")
 
 with st.form("zienswijze_form"):
-    col1, col2 = st.columns(2)
-    with col1:
-        naam = st.text_input("Uw Naam")
-        adres = st.text_input("Uw Adres + Huisnummer")
-    with col2:
-        woonplaats = st.text_input("Postcode + Woonplaats", value="Maastricht")
+    c1, c2, c3 = st.columns(3)
+    with c1:
+        naam = st.text_input("Naam")
+        adres = st.text_input("Adres")
+    with c2:
+        woonplaats = st.text_input("Postcode/Plaats", value="Maastricht")
+    with c3:
         datum = st.text_input("Datum", value=datetime.date.today().strftime("%d-%m-%Y"))
 
-    st.subheader("Selecteer uw bezwaren")
-    st.info("Kies de punten die op u van toepassing zijn. De tool voegt de juridische onderbouwing automatisch toe.")
+    st.subheader("Selecteer uw inhoudelijke bezwaarpunten")
     
     selected_ids = []
+    col_a, col_b, col_c = st.columns(3)
     
-    # Maak 2 kolommen voor de checkboxes
-    c1, c2 = st.columns(2)
-    
-    # Eerste 10 in kolom 1
-    with c1:
-        st.markdown("**Leefbaarheid & Woning**")
-        for i in range(1, 11):
-            if st.checkbox(CHECKBOX_LABELS[i], key=i):
-                selected_ids.append(i)
-                
-    # Volgende 10 in kolom 2
-    with c2:
-        st.markdown("**Milieu, Natuur & Procedure**")
-        for i in range(11, 21):
-            if st.checkbox(CHECKBOX_LABELS[i], key=i):
-                selected_ids.append(i)
+    with col_a:
+        st.markdown("### 🏛️ Procedure & Juridisch")
+        for i in range(1, 6):
+            if st.checkbox(CHECKBOX_LABELS[i], key=i): selected_ids.append(i)
+        st.markdown("### 📐 Maat & Schaal")
+        for i in range(6, 9):
+            if st.checkbox(CHECKBOX_LABELS[i], key=i): selected_ids.append(i)
 
-    st.subheader("Persoonlijke Situatie (Optioneel)")
-    personal_note = st.text_area("Wat is uw specifieke zorg? (Bijv: 'Mijn tuin grenst aan de inrit', 'Mijn kind fietst hier')", height=100)
+    with col_b:
+        st.markdown("### 🌿 Groen & Leefklimaat")
+        for i in range(9, 13):
+            if st.checkbox(CHECKBOX_LABELS[i], key=i): selected_ids.append(i)
+        st.markdown("### 🚗 Verkeer & Veiligheid")
+        for i in range(13, 17):
+            if st.checkbox(CHECKBOX_LABELS[i], key=i): selected_ids.append(i)
 
-    submitted = st.form_submit_button("🚀 Genereer Mijn Zienswijze")
+    with col_c:
+        st.markdown("### 📋 Overig & Beleid")
+        for i in range(18, 21):
+            if st.checkbox(CHECKBOX_LABELS[i], key=i): selected_ids.append(i)
 
-# --- LOGICA NA INDIENEN ---
+    personal_note = st.text_area("Persoonlijke toevoeging (bijv. impact op uw specifieke woning/gezin):")
+    submitted = st.form_submit_button("Genereer Volledige Zienswijze")
 
 if submitted:
-    if not naam or not adres:
-        st.error("Vul alstublieft uw naam en adres in.")
-    elif len(selected_ids) == 0:
-        st.error("Selecteer minimaal één bezwaarpunt.")
+    if not naam or not selected_ids:
+        st.error("Vul uw naam in en selecteer minimaal één punt.")
     else:
-        with st.spinner("De jurist schrijft uw brief... (dit duurt ca. 10 seconden)"):
-            try:
-                # Roep AI aan
-                brief_tekst = generate_zienswijze(naam, f"{adres}, {woonplaats}", datum, selected_ids, personal_note)
-                
-                if "⚠️" in brief_tekst or "Er ging iets mis" in brief_tekst:
-                    st.error(brief_tekst)
-                else:
-                    st.success("Uw zienswijze is gereed!")
-                    
-                    # Toon tekst op scherm
-                    st.text_area("Concept Zienswijze:", value=brief_tekst, height=400)
-                    
-                    # Download knop PDF
-                    pdf_bytes = create_pdf(brief_tekst)
-                    st.download_button(
-                        label="📄 Download als PDF",
-                        data=pdf_bytes,
-                        file_name="Zienswijze_Vroendaal.pdf",
-                        mime="application/pdf"
-                    )
-                    
-                    st.warning("⚠️ DISCLAIMER: Lees de brief goed door voordat u deze verstuurt. U blijft zelf verantwoordelijk voor de inhoud.")
-                
-            except Exception as e:
-                st.error(f"Er ging iets mis: {e}")
-
-
-
-
-
-
+        with st.spinner("Brief wordt opgesteld..."):
+            brief = generate_zienswijze(naam, f"{adres}, {woonplaats}", datum, selected_ids, personal_note)
+            st.text_area("Uw Brief:", brief, height=400)
+            st.download_button("Download PDF", create_pdf(brief), "Zienswijze_Vroendaal_Update.pdf", "application/pdf")
