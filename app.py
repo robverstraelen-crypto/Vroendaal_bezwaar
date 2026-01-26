@@ -11,7 +11,7 @@ try:
 except:
     client = None
 
-# Tekstblokken integraal behouden
+# Tekstblokken integraal behouden (zonder harde nummers in de tekst zelf)
 TEXT_BLOCKS = {
     1: """Misleiding van de Raad over Contractdatum
 Ik maak ernstig bezwaar tegen de onrechtmatige start van deze procedure. Het College heeft de Gemeenteraad in de Raadsinformatiebrief (RIB) van 26 november 2025 geïnformeerd dat de anterieure overeenkomst "is aangegaan". Uit het dossier blijkt echter dat deze pas op 22 december is getekend. De Raad – en daarmee de burger – is bewust op het verkeerde been gezet over de juridische status van het project. Een besluit dat rust op feitelijk onjuiste informatie aan het hoogste bestuursorgaan is in strijd met het zorgvuldigheidsbeginsel (art. 3:2 Awb) en de actieve inlichtingenplicht. Ik verzoek u de procedure te staken wegens onbehoorlijk bestuur.""",
@@ -65,7 +65,7 @@ De verkeersmodellen negeren de realiteit van het naastgelegen milieuperron. Op p
 Bewoners en zelfs de wethouder hebben geopperd om een rotonde aan te leggen als structurele oplossing voor de onveilige Rijksweg. Dit alternatief is zonder goede motivering terzijde geschoven ("past niet in richtlijnen"). De gemeente weegt de uitleg waarom verkeersveiligheid geen reden is om van richtlijnen af te wijken. Het frustreren van een veilige oplossing (rotonde) ten gunste van een goedkope, onveilige uitrit getuigt van onbehoorlijk bestuur. Ik eis dat de besluitvorming wordt opgeschort tot de rotonde-variant serieus is doorgerekend.""",
     
     18: """Mismatch Woonbehoefte
-Het plan voorziet overwegend in kleine appartementen. Dit sluit niet aan bij de demografische behoefte van Vroendaal. De vergrijzende wijk vraagt om ruime, levensloopbestendige appartementen voor senioren die willen doorstromen vanuit hun gezinswoning. Door te kiezen voor maximale aantallen (kleine units) in plaats van kwaliteit, bouwt de gemeente voor de leegstand van de toekomst. Deze 'schoenendozen' op een locatie ver van het centrum hebben een slechte marktpositie. Het plan voldoet daarmee niet aan de kwalitatieve eisen van de Woonvisie Maastricht.""",
+Het plan voorziet overwegend in kleine appartementen. Dit sluit niet aan bij de demografische behoefte van Vroendaal. De vergrijzende wijk vraagt om ruime, levensloopbestendige appartementen voor senioren die willen doorstromen vanuit hun gezinswoning. Door te kiezen voor maximale aantallen (kleine units) in plaats van kwaliteit, bouwt de gemeente voor de leegstand van de toekomst. Deze 'schoenendozen' op een locatie ver van het centrum hebben een slechte marktポジション. Het plan voldoet daarmee niet aan de kwalitatieve eisen van de Woonvisie Maastricht.""",
     
     19: """Negeren Burgeralternatief (Participatie)
 De gemeente stelt dat er geparticipeerd is, maar heeft het constructieve 'Burgeralternatief' (grondgebonden woningen, passend in de maat) zonder serieus onderzoek terzijde geschoven. De participatie is gereduceerd tot een informatieavond zonder invloed. In het verslag wordt de massale weerstand van de buurt gebagatelliseerd. Dit is in strijd met de geest van de Omgevingswet, die vroegtijdige en volwaardige participatie eist. Ik voel mij als burger niet gehoord en eis dat het Burgeralternatief alsnog als volwaardig scenario wordt getoetst.""",
@@ -82,14 +82,16 @@ def generate_zienswijze(naam, adres, datum, selected_ids, personal_note, proform
     if not client:
         return "⚠️ Er is geen API key ingesteld."
 
+    # Hernummering logica: We maken een nieuwe lijst van teksten met nieuwe nummers
     integrale_teksten = ""
-    for i in selected_ids:
-        integrale_teksten += f"BEZWAARPUNT {i}:\n{TEXT_BLOCKS[i]}\n\n"
+    for index, selected_id in enumerate(selected_ids, start=1):
+        integrale_teksten += f"BEZWAARPUNT {index}:\n{TEXT_BLOCKS[selected_id]}\n\n"
 
     system_prompt = """
     Je bent een senior procesadvocaat bestuursrecht.
     
     CRUCIALE INSTRUCTIE:
+    - Hernummer de bezwaarpunten strikt zoals aangeleverd in de lijst (1, 2, 3...).
     - De brief moet gericht zijn aan: De Gemeenteraad van Maastricht EN het College van Burgemeester en Wethouders van Maastricht.
     - Gebruik GEEN Markdown opmaak zoals sterretjes (**) of hekjes (#).
     - Neem de teksten onder 'BEZWAARPUNTEN' volledig en integraal over.
@@ -104,7 +106,7 @@ def generate_zienswijze(naam, adres, datum, selected_ids, personal_note, proform
     PRO-FORMA REFERENTIE: {proforma_info}
     PERSOONLIJK BELANG: {personal_note}
     
-    BEZWAARPUNTEN:
+    BEZWAARPUNTEN (NEEM DEZE OVER EN BEHOUD DE NIEUWE NUMMERING):
     {integrale_teksten}
     """
 
@@ -131,7 +133,7 @@ def create_pdf(text):
     lines = text.split('\n')
     for line in lines:
         is_header = False
-        # Herken adressering en bezwaarpunten voor vetdruk
+        # Herken adressering en de NIEUWE bezwaarpunten voor vetdruk
         if any(keyword in line for keyword in ["Gemeenteraad", "College van Burgemeester", "BEZWAARPUNT", "Betreft:", "Geachte"]):
             is_header = True
             
@@ -160,6 +162,7 @@ with st.form("form"):
 
     st.divider()
     
+    # Gebruik gesorteerde geselecteerde ID's om volgorde te behouden
     sel_ids = []
     col_a, col_b, col_c = st.columns(3)
     with col_a:
@@ -181,7 +184,9 @@ if submitted:
     if not (naam and sel_ids):
         st.error("Naam en minimaal één bezwaarpunt verplicht.")
     else:
-        with st.spinner("Brief wordt gegenereerd..."):
-            resultaat = generate_zienswijze(naam, adres, datum_brief, sel_ids, personal_note, proforma_info)
-            st.text_area("Uw Brief (Preview):", resultaat, height=500)
+        with st.spinner("Brief wordt gegenereerd en hernummerd..."):
+            # We sorteren de sel_ids zodat ze in de logische volgorde van het formulier verschijnen
+            sorted_sel_ids = sorted(sel_ids)
+            resultaat = generate_zienswijze(naam, adres, datum_brief, sorted_sel_ids, personal_note, proforma_info)
+            st.text_area("Uw Brief (Preview met hernummering):", resultaat, height=500)
             st.download_button("Download PDF", create_pdf(resultaat), f"Zienswijze_Vroendaal_{naam.replace(' ', '_')}.pdf")
