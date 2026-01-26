@@ -11,7 +11,7 @@ try:
 except:
     client = None
 
-# Tekstblokken integraal behouden (zonder harde nummers in de tekst zelf)
+# Tekstblokken integraal behouden
 TEXT_BLOCKS = {
     1: """Misleiding van de Raad over Contractdatum
 Ik maak ernstig bezwaar tegen de onrechtmatige start van deze procedure. Het College heeft de Gemeenteraad in de Raadsinformatiebrief (RIB) van 26 november 2025 geïnformeerd dat de anterieure overeenkomst "is aangegaan". Uit het dossier blijkt echter dat deze pas op 22 december is getekend. De Raad – en daarmee de burger – is bewust op het verkeerde been gezet over de juridische status van het project. Een besluit dat rust op feitelijk onjuiste informatie aan het hoogste bestuursorgaan is in strijd met het zorgvuldigheidsbeginsel (art. 3:2 Awb) en de actieve inlichtingenplicht. Ik verzoek u de procedure te staken wegens onbehoorlijk bestuur.""",
@@ -65,7 +65,7 @@ De verkeersmodellen negeren de realiteit van het naastgelegen milieuperron. Op p
 Bewoners en zelfs de wethouder hebben geopperd om een rotonde aan te leggen als structurele oplossing voor de onveilige Rijksweg. Dit alternatief is zonder goede motivering terzijde geschoven ("past niet in richtlijnen"). De gemeente weegt de uitleg waarom verkeersveiligheid geen reden is om van richtlijnen af te wijken. Het frustreren van een veilige oplossing (rotonde) ten gunste van een goedkope, onveilige uitrit getuigt van onbehoorlijk bestuur. Ik eis dat de besluitvorming wordt opgeschort tot de rotonde-variant serieus is doorgerekend.""",
     
     18: """Mismatch Woonbehoefte
-Het plan voorziet overwegend in kleine appartementen. Dit sluit niet aan bij de demografische behoefte van Vroendaal. De vergrijzende wijk vraagt om ruime, levensloopbestendige appartementen voor senioren die willen doorstromen vanuit hun gezinswoning. Door te kiezen voor maximale aantallen (kleine units) in plaats van kwaliteit, bouwt de gemeente voor de leegstand van de toekomst. Deze 'schoenendozen' op een locatie ver van het centrum hebben een slechte marktポジション. Het plan voldoet daarmee niet aan de kwalitatieve eisen van de Woonvisie Maastricht.""",
+Het plan voorziet overwegend in kleine appartementen. Dit sluit niet aan bij de demografische behoefte van Vroendaal. De vergrijzende wijk vraagt om ruime, levensloopbestendige appartementen voor senioren die willen doorstromen vanuit hun gezinswoning. Door te kiezen voor maximale aantallen (kleine units) in plaats van kwaliteit, bouwt de gemeente voor de leegstand van de toekomst. Deze 'schoenendozen' op een locatie ver van het centrum hebben een slechte marktpositie. Het plan voldoet daarmee niet aan de kwalitatieve eisen van de Woonvisie Maastricht.""",
     
     19: """Negeren Burgeralternatief (Participatie)
 De gemeente stelt dat er geparticipeerd is, maar heeft het constructieve 'Burgeralternatief' (grondgebonden woningen, passend in de maat) zonder serieus onderzoek terzijde geschoven. De participatie is gereduceerd tot een informatieavond zonder invloed. In het verslag wordt de massale weerstand van de buurt gebagatelliseerd. Dit is in strijd met de geest van de Omgevingswet, die vroegtijdige en volwaardige participatie eist. Ik voel mij als burger niet gehoord en eis dat het Burgeralternatief alsnog als volwaardig scenario wordt getoetst.""",
@@ -80,23 +80,22 @@ CHECKBOX_LABELS = {i: TEXT_BLOCKS[i].split('\n')[0] for i in range(1, 21)}
 
 def generate_zienswijze(naam, adres, datum, selected_ids, personal_note, proforma_info):
     if not client:
-        return "⚠️ Er is geen API key ingesteld."
+        return "⚠️ Er is geen API key ingesteld. Controleer je 'Secrets' in Streamlit."
 
-    # Hernummering logica: We maken een nieuwe lijst van teksten met nieuwe nummers
     integrale_teksten = ""
     for index, selected_id in enumerate(selected_ids, start=1):
         integrale_teksten += f"BEZWAARPUNT {index}:\n{TEXT_BLOCKS[selected_id]}\n\n"
 
     system_prompt = """
-    Je bent een senior procesadvocaat bestuursrecht.
+    Je bent een senior procesadvocaat bestuursrecht. Je schrijft de motivering van een zienswijze.
     
     CRUCIALE INSTRUCTIE:
-    - Hernummer de bezwaarpunten strikt zoals aangeleverd in de lijst (1, 2, 3...).
-    - De brief moet gericht zijn aan: De Gemeenteraad van Maastricht EN het College van Burgemeester en Wethouders van Maastricht.
-    - Gebruik GEEN Markdown opmaak zoals sterretjes (**) of hekjes (#).
-    - Neem de teksten onder 'BEZWAARPUNTEN' volledig en integraal over.
-    - Begin met een formele verwijzing naar de pro-forma zienswijze.
-    - Eindig met een formele afsluiting en verzoek om een ontvangstbevestiging.
+    - De brief is gericht aan: De Gemeenteraad van Maastricht EN het College van B&W van Maastricht.
+    - Gebruik de nieuwe nummering (1, 2, 3...) zoals aangeleverd onder BEZWAARPUNTEN.
+    - Gebruik GEEN sterretjes (**) voor vetdruk in de platte tekst.
+    - Neem de teksten integraal en volledig over zonder in te korten.
+    - Open de brief met de verwijzing naar de pro-forma indiening (indien opgegeven).
+    - Toon professioneel juridisch meesterschap.
     """
 
     user_prompt = f"""
@@ -106,7 +105,7 @@ def generate_zienswijze(naam, adres, datum, selected_ids, personal_note, proform
     PRO-FORMA REFERENTIE: {proforma_info}
     PERSOONLIJK BELANG: {personal_note}
     
-    BEZWAARPUNTEN (NEEM DEZE OVER EN BEHOUD DE NIEUWE NUMMERING):
+    BEZWAARPUNTEN (INTEGRAAL OVERNEMEN):
     {integrale_teksten}
     """
 
@@ -119,10 +118,9 @@ def generate_zienswijze(naam, adres, datum, selected_ids, personal_note, proform
             ],
             temperature=0.1
         )
-        clean_text = response.choices[0].message.content.replace("**", "")
-        return clean_text
+        return response.choices[0].message.content.replace("**", "")
     except Exception as e:
-        return f"AI Fout: {str(e)}"
+        return f"Fout: {str(e)}"
 
 def create_pdf(text):
     pdf = FPDF()
@@ -133,8 +131,7 @@ def create_pdf(text):
     lines = text.split('\n')
     for line in lines:
         is_header = False
-        # Herken adressering en de NIEUWE bezwaarpunten voor vetdruk
-        if any(keyword in line for keyword in ["Gemeenteraad", "College van Burgemeester", "BEZWAARPUNT", "Betreft:", "Geachte"]):
+        if any(kw in line for kw in ["Gemeenteraad", "College van B&W", "BEZWAARPUNT", "Betreft:", "Geachte"]):
             is_header = True
             
         if is_header:
@@ -147,22 +144,22 @@ def create_pdf(text):
     return pdf.output(dest="S").encode("latin-1")
 
 # --- UI ---
-st.set_page_config(page_title="Zienswijze Onderbouwing", layout="wide")
+st.set_page_config(page_title="Zienswijze Onderbouwing Vroendaal", layout="wide")
 st.title("⚖️ Zienswijze Onderbouwing Vroendaal")
 
 with st.form("form"):
     c1, c2 = st.columns(2)
     with c1:
         naam = st.text_input("Naam")
-        adres = st.text_input("Adres + Woonplaats")
+        adres = st.text_input("Adres + Huisnummer")
+        woonplaats = st.text_input("Postcode + Woonplaats", value="Maastricht")
         datum_brief = st.text_input("Datum brief", value=datetime.date.today().strftime("%d-%m-%Y"))
     with c2:
-        proforma_info = st.text_input("Referentie pro-forma brief", placeholder="Bijv: Mijn brief d.d. 12 januari 2026")
-        personal_note = st.text_input("Persoonlijk belang (kort)", placeholder="Bijv: Direct omwonende")
+        proforma_info = st.text_input("Referentie pro-forma brief (Indien van toepassing)", placeholder="Bijv: Mijn brief d.d. 12 januari 2026")
+        personal_note = st.text_area("Persoonlijk belang / Noot", placeholder="Beschrijf hier kort waarom dit project u specifiek raakt...")
 
     st.divider()
     
-    # Gebruik gesorteerde geselecteerde ID's om volgorde te behouden
     sel_ids = []
     col_a, col_b, col_c = st.columns(3)
     with col_a:
@@ -178,15 +175,65 @@ with st.form("form"):
         for i in range(13, 21):
             if st.checkbox(CHECKBOX_LABELS[i], key=i): sel_ids.append(i)
 
-    submitted = st.form_submit_button("🚀 Genereer Volledige Brief")
+    submitted = st.form_submit_button("🚀 Genereer Mijn Brief")
 
+# --- LOGICA NA INDIENEN ---
 if submitted:
-    if not (naam and sel_ids):
-        st.error("Naam en minimaal één bezwaarpunt verplicht.")
+    if not naam or not adres:
+        st.error("Vul alstublieft uw naam en adres in.")
+    elif not sel_ids:
+        st.error("Selecteer minimaal één bezwaarpunt.")
     else:
-        with st.spinner("Brief wordt gegenereerd en hernummerd..."):
-            # We sorteren de sel_ids zodat ze in de logische volgorde van het formulier verschijnen
-            sorted_sel_ids = sorted(sel_ids)
-            resultaat = generate_zienswijze(naam, adres, datum_brief, sorted_sel_ids, personal_note, proforma_info)
-            st.text_area("Uw Brief (Preview met hernummering):", resultaat, height=500)
-            st.download_button("Download PDF", create_pdf(resultaat), f"Zienswijze_Vroendaal_{naam.replace(' ', '_')}.pdf")
+        with st.spinner("Uw brief wordt geschreven... (ca. 10 seconden)"):
+            try:
+                # Roep AI aan
+                brief_tekst = generate_zienswijze(naam, f"{adres}, {woonplaats}", datum_brief, sorted(sel_ids), personal_note, proforma_info)
+                
+                st.success("✅ Uw zienswijze is gereed!")
+                
+                # Toon tekst op scherm
+                st.text_area("Concept Zienswijze (kopieerbaar):", value=brief_tekst, height=400)
+                
+                # Download knop PDF
+                pdf_bytes = create_pdf(brief_tekst)
+                st.download_button(
+                    label="📄 Download als PDF",
+                    data=pdf_bytes,
+                    file_name=f"Zienswijze_Vroendaal_{naam.replace(' ', '_')}.pdf",
+                    mime="application/pdf"
+                )
+                
+                st.warning("⚠️ DISCLAIMER: Lees de brief goed door voordat u deze verstuurt. U blijft zelf verantwoordelijk voor de inhoud.")
+
+                # --- PERSONALISATIE INSTRUCTIE ---
+                st.info("💡 **Wilt u de brief nog verder aanpassen?**\nU kunt de tekst hierboven kopiëren en in een Word-document plakken. Zo kunt u de brief naar eigen wens finetunen, opslaan als PDF, uitprinten en ondertekenen.")
+
+                # --- INDIEINSTRUCTIES ---
+                st.divider()
+                st.subheader("📬 Hoe kunt u uw brief en/of (pro-forma) zienswijze aanleveren?")
+                
+                st.markdown("""
+                **1. Via e-mail**
+                Stuur uw PDF naar: **post@maastricht.nl**
+                Vermeld daarbij duidelijk:
+                * Uw naam en adres
+                * Een omschrijving van het onderwerp/ontwerpbesluit ('Zienswijze ontwerp-omgevingsplan Woningbouw Vroendaal')
+
+                **2. Schriftelijk**
+                Per (aangetekende) post aan:
+                **Gemeenteraad Maastricht, Postbus 1992, 6201 BZ Maastricht**
+
+                **3. Via het Contactformulier**
+                Dit gaat met behulp van uw DigiID. U ontvangt dan meteen een digitale ontvangstbevestiging.
+                [Klik hier voor het eloket Gemeente Maastricht](https://eloket.gemeentemaastricht.nl/f/2176/login)
+                """)
+
+                st.success("**Vergeet niet uw brief te ondertekenen!**")
+                st.info("**Zegt het voort aan uw buren!**")
+                st.markdown("Namens de **Werkgroep Nieuwbouw Vroendaal**.")
+                
+            except Exception as e:
+                st.error(f"Er ging iets mis bij het genereren: {e}")
+
+st.divider()
+st.caption("Werkgroep Nieuwbouw Vroendaal - 2026")
