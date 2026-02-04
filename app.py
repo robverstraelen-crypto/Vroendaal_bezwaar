@@ -111,7 +111,7 @@ CHECKBOX_LABELS = {
     12: "Bouwverkeer door de Wijk",
     13: "Hittestress & Verstening",
     14: "Kap van Bomen",
-
+}
 
 
 
@@ -315,3 +315,4 @@ if submitted:
                 
             except Exception as e:
                 st.error(f"Er ging iets mis: {e}")
+
