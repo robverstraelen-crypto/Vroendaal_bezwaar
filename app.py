@@ -135,12 +135,12 @@ BLOCKS = [
         "title": "Schaalbreuk met laagbouwwijk Vroendaal",
         "text": """Het bouwplan veroorzaakt een fundamentele schaalbreuk met de bestaande laagbouwwijk Vroendaal. De wijk bestaat overwegend uit grondgebonden woningen met een fijnmazige, dorpse structuur, terwijl het plan voorziet in twee massieve, gestapelde bouwblokken van drie lagen op een halfverdiepte parkeerkelder. Deze typologie en massa sluiten niet aan op het bestaande stedenbouwkundige weefsel en vormen een vreemd lichaam in de wijk. Daarnaast wordt het beleidsmatige uitgangspunt voor stadsrandwijken van maximaal 10 meter bouwhoogte overschreden met een feitelijke hoogte van 11,63 meter. Ook de werkelijke footprint van 2.230 m² is aanzienlijk groter dan gepresenteerd en disproportioneel voor de locatie. De visuele dominantie leidt tot ernstige privacy-aantasting door directe inkijk vanuit zestien appartementen op vier bestaande woningen. Van zorgvuldige inpassing is geen sprake.""",
     },
-    {
-        "id": 13,
-        "category": "Fysieke Leefomgeving",
-        "section": "Milieu en gezondheid",
-        "title": "Onverantwoorde woningbouw op vervuilde locatie",
-        "text": """De bouwlocatie betreft een zwaar vervuilde voormalige autosloperij en vormt een acuut risico voor volksgezondheid en milieu. Er is sprake van extreme loodverontreiniging ver boven de interventiewaarde, mogelijke asbest- en PAK-vervuiling en onvolledig bodemonderzoek, terwijl de bestemming wijzigt naar wonen. Bodemrapporten zijn ondanks interne bezwaren toch gebruikt, wat wijst op manipulatie om het plan door te zetten. Tijdens de bouw bestaat een onopgelost veiligheidsconflict tussen asbest- en explosievenprotocollen, zonder integraal veiligheidsplan voor omwonenden op korte afstand. De locatie ligt bovendien in een grondwaterbeschermingsgebied; diepe heipalen kunnen leiden tot verspreiding van vervuiling richting drinkwater, terwijl een vereiste provinciale ontheffing ontbreekt. Sanering is financieel en procedureel niet geborgd: er is geen goedgekeurd saneringsplan en geen budget gereserveerd. Woningbouw onder deze omstandigheden is onverantwoord en strijdig met de zorgplicht.""",
+   {
+    "id": 13,
+    "category": "Fysieke Leefomgeving",
+    "section": "Milieu en gezondheid",
+    "title": "Onverantwoorde risico’s Bodem & Gezondheid (Ontbreken RUD-advies)",
+    "text": """De bouwlocatie betreft een zwaar vervuilde voormalige autosloperij met extreme loodverontreiniging en asbestrisico's. Woningbouw op deze locatie vereist de hoogste mate van zorgvuldigheid, die hier ontbreekt. De gemeente erkent in recente stukken dat voor de beoordeling van de sanering geen advies is ingewonnen bij de Regionale Uitvoeringsdienst (RUD). Dit is in strijd met de vergewisplicht (artikel 3:9 Awb). Een behandelend ambtenaar kan zonder specialistisch advies van de milieudienst onmogelijk beoordelen of de sanering van een dergelijk risicovolle locatie afdoende is. De sanering wordt nu slechts 'geborgd' door een voorschrift dat het college achteraf geïnformeerd moet worden over getroffen maatregelen. Gezien de complexe vervuiling is dit onverantwoord; voorafgaande goedkeuring door experts is noodzakelijk. Het plan wordt nu vastgesteld zonder de garantie dat de locatie veilig bewoonbaar is, wat strijdig is met de wettelijke zorgplicht voor een gezonde leefomgeving."""
     },
     {
         "id": 14,
@@ -719,3 +719,4 @@ U heeft 3 opties om uw zienswijze in te dienen. **Doe dit uiterlijk 12 februari 
 
 *Tip: Stuur ook een kopie naar de griffie (`griffie@maastricht.nl`) zodat raadsleden weten dat u gereageerd heeft.*
 """)
+
