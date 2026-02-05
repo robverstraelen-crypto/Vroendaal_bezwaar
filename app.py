@@ -424,10 +424,11 @@ for tab, cat in zip(tabs, CATEGORIES):
             with st.expander(f"{sec} ({len(ids_filtered)} punten)", expanded=True):
                 for bid in ids_filtered:
                     b = BY_ID[bid]
-                    checked = st.checkbox(b["title"], key=f"cb_{bid}", value=st.session_state.get(f"cb_{bid}", False))
-if checked:
-    with st.expander("Toon volledige tekst", expanded=True):
-        st.markdown(b["text"])
+                    st.checkbox(b["title"], key=f"cb_{bid}")
+
+if st.session_state.get(f"cb_{bid}", False):
+    st.markdown(b["text"])
+    st.markdown("---")
 
 # Teller geselecteerde bezwaren
 selected_ids = [b["id"] for b in BLOCKS if st.session_state.get(f"cb_{b['id']}", False)]
@@ -560,4 +561,5 @@ U heeft 3 opties om uw zienswijze in te dienen. **Doe dit uiterlijk 12 februari 
 
 *Tip: Stuur ook een kopie naar de griffie (`griffie@maastricht.nl`) zodat raadsleden weten dat u gereageerd heeft.*
 """)
+
 
