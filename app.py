@@ -16,7 +16,7 @@ PAGE_TITLE = "Verzet Vroendaal"
 PAGE_ICON = "⚖️"
 
 MODEL_NAME = "gpt-4o"
-TEMPERATURE = 0.4
+TEMPERATURE = 0.3
 
 UI_INSTRUCTIE_MD = """
 **Instructie**
@@ -564,3 +564,4 @@ if submitted:
         )
 
     st.warning("⚠️ DISCLAIMER: Lees de zienswijze goed door vóór verzending. U blijft zelf verantwoordelijk voor de inhoud.")
+
