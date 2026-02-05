@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import datetime
 import io
+import json
+import random
 import re
 from typing import List, Dict, Any
 
 import streamlit as st
 from fpdf import FPDF
+from openai import OpenAI
 
 from docx import Document
 from docx.shared import Pt
@@ -24,7 +27,8 @@ ZAAKHEADER = f"Zienswijze zaak {DOSSIER_ZAAKNUMMER}"
 
 INTRO_MD = """
 Gebruik deze tool om uw zienswijze te genereren.  
-De geselecteerde tekstblokken worden **letterlijk** overgenomen in het Word-document.
+De geselecteerde tekstblokken worden **letterlijk** overgenomen in het Word-document.  
+Optioneel kan AI zorgen voor variatie in **inleiding/overgangen/conclusie** (zonder nieuwe feiten).
 """
 
 INSTRUCTIES_KORT = """
@@ -35,9 +39,14 @@ INSTRUCTIES_KORT = """
 4) Selecteer uw bezwaren en download het document.
 """
 
+AI_MODEL = "gpt-4o"
+AI_TEMPERATURE = 0.25
+AI_FREQ_PENALTY = 0.3
+AI_PRES_PENALTY = 0.1
+AI_TOP_P = 0.9
+
 # =========================================================
-# TEKSTBLOKKEN (LETTERLIJK) — uit Teksten generator Zienswijze final.docx
-# Structuur: Heading 1 = category, Heading 2 = section, Heading 3 = title, Normal = text
+# TEKSTBLOKKEN (LETTERLIJK) — exact zoals in jouw app
 # =========================================================
 
 BLOCKS = [
@@ -239,6 +248,12 @@ BLOCKS = [
 # HELPERS
 # =========================================================
 
+def get_client() -> OpenAI | None:
+    try:
+        return OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    except Exception:
+        return None
+
 def normalize_ws(s: str) -> str:
     return re.sub(r"\s+", " ", s or "").strip()
 
@@ -270,10 +285,129 @@ def create_pdf_bytes(text: str) -> bytes:
         pdf.multi_cell(0, 6, line)
     return pdf.output(dest="S").encode("latin-1")
 
-BY_ID, CATEGORIES, CAT_MAP = build_indexes(BLOCKS)
+def safe_filename(name: str) -> str:
+    name = (name or "").strip()
+    safe = re.sub(r"[^a-zA-Z0-9_-]+", "_", name)[:40]
+    return safe if safe else "Zienswijze"
+
+def has_forbidden_numbers(s: str) -> bool:
+    """
+    Anti-hallucinatie-rail:
+    AI mag geen nieuwe cijfers introduceren.
+    Zaaknummer en datumvormen filteren we weg; blijven er cijfers over -> afkeuren.
+    """
+    if not s:
+        return False
+    t = s.replace(DOSSIER_ZAAKNUMMER, "")
+    t = re.sub(r"\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b", "", t)
+    t = re.sub(
+        r"\b\d{1,2}\s+(januari|februari|maart|april|mei|juni|juli|augustus|september|oktober|november|december)\s+\d{4}\b",
+        "",
+        t,
+        flags=re.IGNORECASE,
+    )
+    return bool(re.search(r"\d", t))
+
+def ai_generate_shell(
+    client: OpenAI,
+    selected_titles: List[str],
+    is_pro_forma: bool,
+    is_protest: bool,
+    n_transitions: int,
+    seed: int,
+) -> Dict[str, Any] | None:
+    """
+    Genereert alleen variatie in intro/transitions/conclusie.
+    De inhoudelijke blokken blijven letterlijk en komen niet uit de AI.
+    """
+
+    system_prompt = f"""
+Je bent een senior procesjurist bestuursrecht. Je schrijft alleen de 'schil' rond een zienswijze.
+BELANGRIJK:
+- Voeg GEEN nieuwe feiten toe.
+- Voeg GEEN juridische verwijzingen, normen, aantallen, bedragen of specifieke data toe.
+- Gebruik geen cijfers (0-9), behalve het zaaknummer {DOSSIER_ZAAKNUMMER} als dat nodig is.
+- Blijf algemeen: alleen stijl/structuur/overgangen.
+- Output ALLEEN geldige JSON met precies deze keys: intro, transitions, conclusion.
+- transitions is een lijst met exact {n_transitions} korte zinnen (max 20 woorden) die de punten logisch verbinden.
+""".strip()
+
+    user_prompt = {
+        "zaaknummer": DOSSIER_ZAAKNUMMER,
+        "is_pro_forma": is_pro_forma,
+        "is_protest": is_protest,
+        "selected_titles": selected_titles,
+        "seed_hint": seed,
+        "instruction": (
+            "Schrijf een formele, heldere intro. Daarna korte overgangszinnen. "
+            "Eindig met een formele conclusie/verzoek om ontvangstbevestiging. "
+            "Geen feiten, geen cijfers, geen nieuwe inhoud."
+        )
+    }
+
+    try:
+        resp = client.chat.completions.create(
+            model=AI_MODEL,
+            messages=[
+                {"role": "system", "content": system_prompt},
+                {"role": "user", "content": json.dumps(user_prompt, ensure_ascii=False)},
+            ],
+            temperature=AI_TEMPERATURE,
+            top_p=AI_TOP_P,
+            frequency_penalty=AI_FREQ_PENALTY,
+            presence_penalty=AI_PRES_PENALTY,
+        )
+        raw = resp.choices[0].message.content.strip()
+        data = json.loads(raw)
+
+        if not isinstance(data, dict):
+            return None
+        if "intro" not in data or "transitions" not in data or "conclusion" not in data:
+            return None
+        if not isinstance(data["transitions"], list) or len(data["transitions"]) != n_transitions:
+            return None
+
+        if has_forbidden_numbers(data.get("intro", "")) or has_forbidden_numbers(data.get("conclusion", "")):
+            return None
+        for t in data["transitions"]:
+            if has_forbidden_numbers(t):
+                return None
+
+        if len(data["intro"]) > 1400 or len(data["conclusion"]) > 1000:
+            return None
+        for t in data["transitions"]:
+            if len(t) > 220:
+                return None
+
+        return data
+    except Exception:
+        return None
+
+def default_shell(is_pro_forma: bool, is_protest: bool, n_transitions: int) -> Dict[str, Any]:
+    intro = ""
+    if is_pro_forma:
+        intro += "Hierbij dien ik, ondergetekende, mijn inhoudelijke aanvulling in op de eerder door mij ingediende pro-forma zienswijze. "
+    else:
+        intro += "Hierbij dien ik, ondergetekende, mijn zienswijze in tegen het ontwerp TAM-Omgevingsplan Vroendaal. "
+    if is_protest:
+        intro += (
+            "Ik dien deze zienswijze in ONDER PROTEST. "
+            "Omdat het dossier incompleet is en (cruciale) stukken laat of gefaseerd beschikbaar zijn gesteld, "
+            "maak ik een formeel voorbehoud om deze zienswijze later nog aan te vullen zodra alle stukken volledig ter inzage zijn gelegd. "
+        )
+    intro += "Ik breng de volgende bezwaren naar voren:"
+
+    transitions = ["Voorts wijs ik op het volgende punt."] * n_transitions
+
+    conclusion = (
+        "Conclusie & Vordering\n"
+        "Ik verzoek u deze zienswijze te betrekken bij de besluitvorming en het plan niet in deze vorm vast te stellen. "
+        "Ik verzoek u tevens de ontvangst van deze zienswijze schriftelijk te bevestigen."
+    )
+    return {"intro": intro, "transitions": transitions, "conclusion": conclusion}
 
 # =========================================================
-# DOCX GENERATOR (deterministisch: tekstblokken letterlijk)
+# DOCX GENERATOR
 # =========================================================
 
 def create_zienswijze_doc(
@@ -282,13 +416,33 @@ def create_zienswijze_doc(
     is_pro_forma: bool,
     is_protest: bool,
     eigen_bezwaren: List[str],
+    use_ai_shell: bool,
+    shuffle_points: bool,
+    client: OpenAI | None,
+    seed: int,
 ) -> Document:
+
+    points = list(selected_points)
+    if shuffle_points and len(points) > 1:
+        rnd = random.Random(seed)
+        rnd.shuffle(points)
+
+    n_transitions = max(len(points) - 1, 0)
+    shell = None
+
+    if use_ai_shell and client is not None and len(points) > 0:
+        titles = [p["title"] for p in points]
+        shell = ai_generate_shell(client, titles, is_pro_forma, is_protest, n_transitions, seed)
+
+    if shell is None:
+        shell = default_shell(is_pro_forma, is_protest, n_transitions)
+
     doc = Document()
     style = doc.styles["Normal"]
     style.font.name = "Arial"
     style.font.size = Pt(11)
 
-    # 1. Header (afzender)
+    # Afzender
     p_sender = doc.add_paragraph()
     p_sender.add_run(f"{data['naam']}\n").bold = True
     p_sender.add_run(f"{data['adres']}\n{data['postcode']} {data['woonplaats']}\n{data['email']}")
@@ -305,7 +459,7 @@ def create_zienswijze_doc(
     datum_str = datetime.date.today().strftime("%d-%m-%Y")
     doc.add_paragraph(f"\nMaastricht, {datum_str}")
 
-    # 2. Betreft
+    # Betreft
     p_subject = doc.add_paragraph()
     p_subject.add_run("Betreft: ").bold = True
     if is_pro_forma:
@@ -314,35 +468,23 @@ def create_zienswijze_doc(
         subject_text = f"ZIENSWIJZE TAM-OMGEVINGSPLAN 'VROENDAAL' ({DOSSIER_ZAAKNUMMER})"
     p_subject.add_run(subject_text)
 
-    # 3. Inleiding (dynamisch)
+    # Inleiding
     doc.add_paragraph("Geachte leden van de Raad,\n")
+    doc.add_paragraph(shell["intro"])
 
-    intro_text = ""
-    if is_pro_forma:
-        intro_text += "Hierbij dien ik, ondergetekende, mijn inhoudelijke aanvulling in op de eerder door mij ingediende pro-forma zienswijze. "
-    else:
-        intro_text += "Hierbij dien ik, ondergetekende, mijn zienswijze in tegen het ontwerp TAM-Omgevingsplan Vroendaal. "
-
-    if is_protest:
-        intro_text += (
-            "Ik dien deze zienswijze in ONDER PROTEST.\n\n"
-            "Omdat het dossier incompleet is en (cruciale) stukken laat of gefaseerd beschikbaar zijn gesteld, "
-            "maak ik een formeel voorbehoud om deze zienswijze later nog aan te vullen zodra alle stukken volledig ter inzage zijn gelegd.\n"
-        )
-
-    intro_text += "\nIk breng de volgende bezwaren naar voren:"
-    doc.add_paragraph(intro_text)
-
-    # 4. Punten (doorlopende nummering) — letterlijk
+    # Punten (letterlijk) + overgangen
     n = 0
-    for b in selected_points:
+    for idx, b in enumerate(points):
         n += 1
         p = doc.add_paragraph()
         runner = p.add_run(f"\n{n}. {b['title']}")
         runner.bold = True
         doc.add_paragraph(b["text"])
 
-    # Eigen bezwaren (optioneel; doorlopende nummering)
+        if idx < len(points) - 1:
+            doc.add_paragraph(shell["transitions"][idx])
+
+    # Eigen bezwaren
     eigen_clean = [normalize_ws(x) for x in (eigen_bezwaren or []) if normalize_ws(x)]
     if eigen_clean:
         doc.add_paragraph("\nEigen bezwaren (door indiener)\n")
@@ -352,14 +494,10 @@ def create_zienswijze_doc(
             runner = p.add_run(f"\n{n}. {item}")
             runner.bold = True
 
-    # 5. Slot
-    slot_text = (
-        "\nConclusie & Vordering\n"
-        "Ik verzoek u deze zienswijze te betrekken bij de besluitvorming en het plan niet in deze vorm vast te stellen. "
-        "Ik verzoek u tevens de ontvangst van deze zienswijze schriftelijk te bevestigen.\n"
-    )
-    doc.add_paragraph(slot_text)
+    # Slot
+    doc.add_paragraph("\n" + shell["conclusion"])
 
+    # Ondertekening
     doc.add_paragraph("\n\nHoogachtend,\n\n")
     doc.add_paragraph("(handtekening)\n")
     doc.add_paragraph(f"{data['naam']}")
@@ -376,6 +514,13 @@ st.title(APP_TITLE)
 st.markdown(INTRO_MD)
 st.warning(DEADLINE_TEXT)
 st.markdown(INSTRUCTIES_KORT)
+
+client = get_client()
+if client is None:
+    st.warning("⚠️ Geen OpenAI API key gevonden. Voeg `OPENAI_API_KEY` toe in Streamlit Secrets.")
+    st.stop()
+
+BY_ID, CATEGORIES, CAT_MAP = build_indexes(BLOCKS)
 
 # Sidebar: zoek & reset
 with st.sidebar:
@@ -403,6 +548,12 @@ st.header("2. Type Indiening")
 is_pro_forma = st.checkbox("Dit is een AANVULLING op een eerdere pro-forma zienswijze", value=False)
 is_protest = st.checkbox("Ik dien dit in ONDER PROTEST (vanwege late/ontbrekende stukken)", value=True)
 
+# STAP 2b: Variatie-instellingen
+st.header("2b. Variatie (optioneel)")
+use_ai_shell = st.checkbox("🧠 AI-variatie in inleiding/overgangen/conclusie (aanbevolen)", value=True)
+shuffle_points = st.checkbox("🔀 Varieer volgorde van geselecteerde bezwaren", value=True)
+st.caption("De tekstblokken zelf blijven letterlijk; AI mag geen nieuwe feiten toevoegen. Bij ongeldige AI-output volgt automatisch een vaste tekst.")
+
 # STAP 3: Bezwaren kiezen (mindmap-structuur)
 st.header("3. Kies uw Bezwaren")
 st.info("Vink aan wat op u van toepassing is. Gebruik de zoekfunctie links om sneller te filteren.")
@@ -414,7 +565,6 @@ for tab, cat in zip(tabs, CATEGORIES):
         st.markdown(f"### {cat}")
         sections = list(CAT_MAP[cat].keys())
 
-        # secties standaard OPEN
         for sec in sections:
             ids = CAT_MAP[cat][sec]
             ids_filtered = [i for i in ids if matches_search(BY_ID[i], search_q)]
@@ -425,7 +575,6 @@ for tab, cat in zip(tabs, CATEGORIES):
                 for bid in ids_filtered:
                     b = BY_ID[bid]
 
-                    # Checkbox beheert z'n eigen state; geen value= gebruiken
                     st.checkbox(b["title"], key=f"cb_{bid}")
 
                     # Volledige tekst tonen zodra aangevinkt
@@ -474,6 +623,7 @@ st.session_state.custom_items = custom_inputs
 st.header("4. Download & Indieninstructies")
 
 selected_points = [{"title": BY_ID[i]["title"], "text": BY_ID[i]["text"]} for i in selected_ids]
+seed = abs(hash((naam.strip().lower(), adres.strip().lower(), datetime.date.today().isoformat()))) % (10**9)
 
 generate_docx = st.button("🚀 Genereer Zienswijze (.docx)", type="primary", use_container_width=True)
 
@@ -500,13 +650,17 @@ if generate_docx:
         is_pro_forma=is_pro_forma,
         is_protest=is_protest,
         eigen_bezwaren=st.session_state.custom_items,
+        use_ai_shell=use_ai_shell,
+        shuffle_points=shuffle_points,
+        client=client,
+        seed=seed,
     )
 
     bio = io.BytesIO()
     doc.save(bio)
 
     st.success("Uw document is klaar!")
-    safe_name = re.sub(r"[^a-zA-Z0-9_-]+", "_", naam.strip())[:40] or "Zienswijze"
+    safe_name = safe_filename(naam)
     st.download_button(
         label="⬇️ Download Word-bestand",
         data=bio.getvalue(),
@@ -515,7 +669,7 @@ if generate_docx:
         use_container_width=True,
     )
 
-    # Optionele eenvoudige PDF
+    # Optionele eenvoudige PDF (zonder AI-schil; puur als extra)
     try:
         txt = []
         txt.append(f"{naam}\n{adres}\n{postcode} {woonplaats}\n{email}\n")
@@ -527,6 +681,7 @@ if generate_docx:
         else:
             txt.append(f"Betreft: ZIENSWIJZE TAM-OMGEVINGSPLAN 'VROENDAAL' ({DOSSIER_ZAAKNUMMER})\n")
         txt.append("Geachte leden van de Raad,\n")
+
         for idx, p in enumerate(selected_points, 1):
             txt.append(f"\n{idx}. {p['title']}\n{p['text']}\n")
 
@@ -564,6 +719,3 @@ U heeft 3 opties om uw zienswijze in te dienen. **Doe dit uiterlijk 12 februari 
 
 *Tip: Stuur ook een kopie naar de griffie (`griffie@maastricht.nl`) zodat raadsleden weten dat u gereageerd heeft.*
 """)
-
-
-
