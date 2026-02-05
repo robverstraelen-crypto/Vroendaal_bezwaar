@@ -414,7 +414,7 @@ for tab, cat in zip(tabs, CATEGORIES):
         st.markdown(f"### {cat}")
         sections = list(CAT_MAP[cat].keys())
 
-        # secties standaard OPEN (zodat niemand denkt dat er “maar 3” zijn)
+        # secties standaard OPEN
         for sec in sections:
             ids = CAT_MAP[cat][sec]
             ids_filtered = [i for i in ids if matches_search(BY_ID[i], search_q)]
@@ -424,11 +424,14 @@ for tab, cat in zip(tabs, CATEGORIES):
             with st.expander(f"{sec} ({len(ids_filtered)} punten)", expanded=True):
                 for bid in ids_filtered:
                     b = BY_ID[bid]
+
+                    # Checkbox beheert z'n eigen state; geen value= gebruiken
                     st.checkbox(b["title"], key=f"cb_{bid}")
 
-if st.session_state.get(f"cb_{bid}", False):
-    st.markdown(b["text"])
-    st.markdown("---")
+                    # Volledige tekst tonen zodra aangevinkt
+                    if st.session_state.get(f"cb_{bid}", False):
+                        with st.expander("Toon volledige tekst", expanded=True):
+                            st.markdown(b["text"])
 
 # Teller geselecteerde bezwaren
 selected_ids = [b["id"] for b in BLOCKS if st.session_state.get(f"cb_{b['id']}", False)]
@@ -561,5 +564,6 @@ U heeft 3 opties om uw zienswijze in te dienen. **Doe dit uiterlijk 12 februari 
 
 *Tip: Stuur ook een kopie naar de griffie (`griffie@maastricht.nl`) zodat raadsleden weten dat u gereageerd heeft.*
 """)
+
 
 
