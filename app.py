@@ -224,7 +224,7 @@ BLOCKS = [
         "id": 25,
         "category": "Mobiliteit en parkeren",
         "section": "Parkeerproblematiek",
-        "title": "Te smalle parkeervakken veroorzaken papiertekort",
+        "title": "Te smalle parkeervakken veroorzaken parkeertekort",
         "text": """De ingetekende parkeervakken voldoen niet aan de geldende CROW-richtlijnen en zijn daardoor functioneel onbruikbaar. Bezoekersplaatsen zijn uitgevoerd met een breedte van 2,50 meter, terwijl voor wisselende gebruikers een minimale breedte van 2,65 tot 2,70 meter vereist is. Deze normschending leidt tot zogenoemd schuwgedrag: bezoekers mijden de te krappe vakken of parkeren over de belijning, waardoor aangrenzende plaatsen eveneens onbruikbaar worden. Hierdoor ontstaat een papieren parkeerbalans die in de praktijk niet functioneert. Omdat deze vakken technisch niet geschikt zijn voor bezoekers, mogen zij niet worden meegeteld, wat resulteert in een feitelijk parkeertekort. Bezoekers zullen uitwijken naar de openbare ruimte, waardoor parkeerdruk wordt afgewenteld op omliggende woonstraten. Dit is in strijd met het uitgangspunt dat nieuwbouw haar parkeerbehoefte volledig en deugdelijk op eigen terrein moet oplossen.""",
     },
 
@@ -719,4 +719,5 @@ U heeft 3 opties om uw zienswijze in te dienen. **Doe dit uiterlijk 12 februari 
 
 *Tip: Stuur ook een kopie naar de griffie (`griffie@maastricht.nl`) zodat raadsleden weten dat u gereageerd heeft.*
 """)
+
 
