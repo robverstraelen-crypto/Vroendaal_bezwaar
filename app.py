@@ -717,7 +717,8 @@ U heeft 3 opties om uw zienswijze in te dienen. **Doe dit uiterlijk 12 februari 
 **Optie 3: Per E-mail (alleen als dit passend is in uw situatie)**
 - Mail naar `post@maastricht.nl` o.v.v. "Zienswijze zaak {DOSSIER_ZAAKNUMMER}" en vraag om een ontvangstbevestiging.
 
-*Tip: Stuur ook een kopie naar de griffie (`griffie@maastricht.nl`) zodat raadsleden weten dat u gereageerd heeft.*
+*Tip: Stuur ook een kopie naar de griffie (`griffie@gemeenteraadmaastricht.nl`) zodat raadsleden weten dat u gereageerd heeft.*
 """)
+
 
 
